@@ -1,0 +1,10 @@
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+*.swp
+**/*.swp
+*.swo
+**/*.swo
+spec/config/database.yml
+spec/dummy/config/database.yml

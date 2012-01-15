@@ -1,0 +1,6 @@
+test:
+  database: storey_test
+  adapter: postgresql
+  min_messages: WARNING
+  username: root
+  password:

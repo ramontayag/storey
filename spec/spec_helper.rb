@@ -48,7 +48,7 @@ RSpec.configure do |config|
 
     # we don't want any test that has set this to keep it hanging around
     # screwing with our migration
-    ENV['VERSION'] = nil
+    ENV['STEP'] = ENV['VERSION'] = nil
     @rake["db:migrate"].invoke
   end
 end

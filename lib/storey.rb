@@ -44,7 +44,11 @@ module Storey
       block.call if block_given?
     end
   rescue ActiveRecord::StatementInvalid => e
-    raise Storey::SchemaExists, %{The schema "#{name}" already exists.}
+    if e.to_s =~ /schema ".+" already exists/
+      fail Storey::SchemaExists, %{The schema "#{name}" already exists.}
+    else
+      raise e
+    end
   end
 
   def schemas(options={})
@@ -53,8 +57,8 @@ module Storey
 
     sql = "SELECT nspname FROM pg_namespace"
     sql << " WHERE nspname !~ '^pg_.*'"
-    sql << " AND nspname !~ 'information_schema'"
-    sql << " AND nspname !~ 'public'" unless options[:public]
+    sql << " AND nspname != 'information_schema'"
+    sql << " AND nspname != 'public'" unless options[:public]
 
     names = ActiveRecord::Base.connection.query(sql).flatten
 
@@ -85,12 +89,10 @@ module Storey
       ActiveRecord::Base.connection.schema_search_path = name
     end
   rescue ActiveRecord::StatementInvalid => e
-    if e =~ /relation "([^"]+)" does not exist/
-      raise Storey::TableNotFound, %{The schema "#{name}" does not have the table #{$1}.}
-    elsif e =~ /invalid value for parameter "search_path"/
-      raise Storey::SchemaNotFound, %{The schema "#{name}" cannot be found.}
+    if e.to_s =~ /invalid value for parameter "search_path"/
+      fail Storey::SchemaNotFound, %{The schema "#{name}" cannot be found.}
     else
-      raise ActiveRecord::StatementInvalid, e.to_s
+      raise e
     end
   end
 
@@ -138,8 +140,6 @@ module Storey
   def process_excluded_models
     self.excluded_models.each do |model_name|
       model_name.constantize.tap do |klass|
-        # Resetting column information removes previous setting of schemas in table_name
-        #klass.reset_column_information
         table_name = klass.table_name.split('.', 2).last
         klass.table_name = "public.#{table_name}"
       end

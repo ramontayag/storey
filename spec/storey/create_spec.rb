@@ -2,11 +2,10 @@ require 'spec_helper'
 
 describe Storey, "#create" do
   it "should load the schema.rb into the new schema" do
-    Storey.create "foobar"
-    Storey.switch "foobar" do
-      table_names = ActiveRecord::Base.connection.tables
-      table_names.should include("companies")
-      table_names.should include("posts")
+    public_tables = Storey.switch { ActiveRecord::Base.connection.tables }.sort
+    Storey.create "foobar" do
+      foobar_tables = ActiveRecord::Base.connection.tables.sort
+      foobar_tables.should == public_tables
     end
   end
 
@@ -62,6 +61,14 @@ describe Storey, "#create" do
 
       Storey.switch "foo" do
         Post.count.should == 1
+      end
+    end
+
+    context "when creating a record in a table that doesn't exist" do
+      it "should re-raise the original error" do
+        Storey.create "foo" do
+          expect {Fake.create}.to raise_error(ActiveRecord::StatementInvalid)
+        end
       end
     end
   end

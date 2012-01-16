@@ -14,17 +14,15 @@ class Storey::Railtie < Rails::Railtie
     #end
   #end
 
-  #   Hook into ActionDispatch::Reloader to ensure Storey is properly initialized
-  #   Note that this doens't entirely work as expected in Development, because this is called before classes are reloaded
-  #   See the above middleware/console declarations below to help with this.  Hope to fix that soon.
-  #
+  # @bradrobertson's note in Apartment:
+  # Hook into ActionDispatch::Reloader to ensure Storey is properly initialized
+  # Note that this doens't entirely work as expected in Development, because this is called before classes are reloaded
+  # See the above middleware/console declarations below to help with this.  Hope to fix that soon.
   config.to_prepare do
     Storey.init
   end
 
-  #
-  #   Ensure rake tasks are loaded
-  #
+  # Load Storey's rake tasks
   rake_tasks do
     load 'tasks/storey.rake'
   end

@@ -1,15 +1,3 @@
-# NOTE: When run all together, not all tests pass. That's because when schema.rb
-# rewritten and no longer reflects the actual state of the database schema,
-# new postgresql schemas that are created don't have all the tables either.
-# Trying to create items in those tables with blow up the tests.
-#
-# What the plan?
-#
-# Perhaps it would be wise to save the schema.rb to schema-backup.rb
-# the first time that schema.rb is created. schema-backup.rb isn't rewritten
-# by the tests as they run. But we use this to schema-backup.rb to overwrite
-# schema.rb for each test.
-
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 

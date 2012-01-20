@@ -8,6 +8,8 @@ require 'storey/migrator'
 module Storey
   extend self
 
+  autoload :Duplicator, 'storey/duplicator'
+
   mattr_accessor :suffix, :default_search_path
   mattr_reader :excluded_models
 
@@ -35,6 +37,8 @@ module Storey
   end
 
   def create(name, options={}, &block)
+    fail ArgumentError, "Must pass in a valid schema name" if name.blank?
+
     options[:load_database_schema] = true unless options.has_key?(:load_database_schema)
 
     name = suffixify(name)
@@ -101,6 +105,27 @@ module Storey
     self.suffix = nil
   end
 
+  def database_config
+    Rails.configuration.database_configuration[Rails.env].with_indifferent_access
+  end
+
+  def duplicate!(from_schema, to_schema)
+    duplicator = Duplicator.new from_schema, to_schema
+    duplicator.perform!
+  end
+
+  def suffixify(name)
+    if Storey.suffix && !name.include?(Storey.suffix) && name != self.default_search_path
+      "#{name}#{Storey.suffix}"
+    else
+      name
+    end
+  end
+
+  def unsuffixify(name)
+    Storey.suffix && name =~ /(\w+)#{Storey.suffix}/ ? $1 : name
+  end
+
   protected
 
   def schema_migrations
@@ -123,18 +148,6 @@ module Storey
     else
       abort %{#{file} doesn't exist yet}
     end
-  end
-
-  def suffixify(name)
-    if Storey.suffix && !name.include?(Storey.suffix) && name != self.default_search_path
-      "#{name}#{Storey.suffix}"
-    else
-      name
-    end
-  end
-
-  def unsuffixify(name)
-    Storey.suffix && name =~ /(\w+)#{Storey.suffix}/ ? $1 : name
   end
 
   def process_excluded_models

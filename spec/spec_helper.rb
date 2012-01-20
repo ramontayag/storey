@@ -9,6 +9,8 @@ require 'database_cleaner'
 # Include rake so we can instantiate the @rake variable and call rake tasks
 require 'rake'
 
+require 'ruby-debug'
+
 RSpec.configure do |config|
   config.before(:each) do
     # We don't want configuration to leak into other tests

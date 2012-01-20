@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["ramon@tayag.net"]
   s.homepage    = ""
   s.summary     = %q{Manage multiple PostgreSQL schemas in your multi-tenant app.}
-  s.description = %q{Heavily inspired by the Apartment gem, Storey aims to simplify the implementation of managing a multi-tenant application. This aims to be just the PostgreSQL schema specific portion of Apartment.}
+  s.description = %q{Storey aims to simplify the implementation of managing a multi-tenant application.}
 
   s.rubyforge_project = "storey"
 
@@ -22,5 +22,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "pg", "~> 0.12.2"
   s.add_development_dependency "database_cleaner"
+  s.add_development_dependency "ruby-debug"
   s.add_runtime_dependency "rails", "~> 3.1.3"
 end

@@ -24,6 +24,18 @@ describe Storey, "#create" do
     end
   end
 
+  context "when no string is passed" do
+    it "should raise argument error" do
+      expect {Storey.create}.to raise_error(ArgumentError)
+    end
+  end
+
+  context "when a blank string is passed" do
+    it "should raise an argument error about an invalid schema name" do
+      expect {Storey.create ""}.to raise_error(ArgumentError, "Must pass in a valid schema name")
+    end
+  end
+
   context "when suffix is set" do
     before do
       Storey.suffix = "_rock"

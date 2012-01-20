@@ -8,3 +8,4 @@ pkg/*
 **/*.swo
 spec/config/database.yml
 spec/dummy/config/database.yml
+spec/dummy/log/*

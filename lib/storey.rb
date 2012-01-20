@@ -35,6 +35,8 @@ module Storey
   end
 
   def create(name, options={}, &block)
+    fail ArgumentError, "Must pass in a valid schema name" if name.blank?
+
     options[:load_database_schema] = true unless options.has_key?(:load_database_schema)
 
     name = suffixify(name)

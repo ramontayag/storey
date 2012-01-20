@@ -9,3 +9,4 @@ pkg/*
 spec/config/database.yml
 spec/dummy/config/database.yml
 spec/dummy/log/*
+spec/dummy/tmp

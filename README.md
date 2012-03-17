@@ -9,7 +9,9 @@ Heavily inspired by the Apartment gem, Storey simplifies the implementation of m
 Typically set in an initializer: config/initializer/storey.rb
 
     # Defines the tables that should stay available to all (ie in the public schema)
-    Storey.excluded_tables = %w(users companies)
+    # Note that there's currently no way to exclude tables that aren't linked to models
+    # If you have any ideas on how to do this I'm open to suggestions
+    Storey.excluded_models = %w(User Company Role Permission)
 
     # If set, all schemas are created with the suffix.
     # Used for obscuring the schema name - which is important when performing schema duplication.
@@ -76,7 +78,7 @@ Accepts
     origin - name of old schema to copy
     copy - name of new schema
 
-Copies a schema with all data under a new name.
+Copies a schema with all data under a new name. Best used in conjunction with `Storey.suffix` set.
 
 Usage:
 

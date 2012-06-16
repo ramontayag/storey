@@ -99,4 +99,47 @@ describe Storey, "#switch" do
       end
     end
   end
+
+  context 'when persitent schemas are set' do
+
+    context 'when suffixes are not set' do
+      before do
+        Storey.create 'foobar'
+        persistent_schemas = %w(handle bar foo)
+        persistent_schemas.each do |schema|
+          Storey.create schema
+        end
+        Storey.persistent_schemas = persistent_schemas
+      end
+
+      it 'should switch to the schema with the persitent schemas still in the search path' do
+        Storey.switch 'foobar'
+        Storey.schema.should == %{foobar,handle,bar,foo}
+
+        Storey.switch
+        Storey.schema.should == %{"$user",public,handle,bar,foo}
+      end
+    end
+
+    context 'when suffixes are set' do
+      before do
+        Storey.suffix = '_boomboom'
+        Storey.create 'foobar'
+        persistent_schemas = %w(handle bar foo)
+        persistent_schemas.each do |schema|
+          Storey.create schema
+        end
+        Storey.persistent_schemas = persistent_schemas
+      end
+
+      it 'should switch to the schema with the persitent schemas still in the search path' do
+        Storey.switch 'foobar'
+        Storey.schema.should == %{foobar,handle,bar,foo}
+
+        Storey.switch
+        Storey.schema.should == %{"$user",public,handle,bar,foo}
+      end
+    end
+
+  end
 end

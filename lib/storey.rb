@@ -10,12 +10,13 @@ module Storey
 
   autoload :Duplicator, 'storey/duplicator'
 
-  mattr_accessor :suffix, :default_search_path
+  mattr_accessor :suffix, :default_search_path, :persistent_schemas
   mattr_reader :excluded_models
 
   def init
     @@default_search_path = schema
     self.excluded_models ||= []
+    self.persistent_schemas ||= []
     process_excluded_models
   end
 
@@ -89,19 +90,28 @@ module Storey
       result
     else
       reset and return if name.blank?
-      name = suffixify name
-      ActiveRecord::Base.connection.schema_search_path = name
+      path = self.schema_search_path_for(name)
+      ActiveRecord::Base.connection.schema_search_path = path
     end
   rescue ActiveRecord::StatementInvalid => e
     if e.to_s =~ /invalid value for parameter "search_path"/
-      fail Storey::SchemaNotFound, %{The schema "#{name}" cannot be found.}
+      fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
     else
       raise e
     end
   end
 
+  def schema_search_path_for(schema_name)
+    path = [suffixify(schema_name)]
+    self.persistent_schemas.each do |schema|
+      path << suffixify(schema)
+    end
+    path.join(',')
+  end
+
   def reload_config!
     self.excluded_models = []
+    self.persistent_schemas = []
     self.suffix = nil
   end
 
@@ -123,7 +133,20 @@ module Storey
   end
 
   def unsuffixify(name)
-    Storey.suffix && name =~ /(\w+)#{Storey.suffix}/ ? $1 : name
+    search_path = name
+    if Storey.suffix
+      paths = []
+      name.split(',').each do |schema|
+        result = if schema =~ /(\w+)#{Storey.suffix}/
+                   $1
+                 else
+                   schema
+                 end
+        paths << result
+      end
+      search_path = paths.join(',')
+    end
+    search_path
   end
 
   protected
@@ -133,7 +156,8 @@ module Storey
   end
 
   def reset
-    ActiveRecord::Base.connection.schema_search_path = self.default_search_path
+    path = self.schema_search_path_for(self.default_search_path)
+    ActiveRecord::Base.connection.schema_search_path = path
   end
 
   # Loads the Rails schema.rb into the current schema

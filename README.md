@@ -17,6 +17,9 @@ Typically set in an initializer: config/initializer/storey.rb
     # Used for obscuring the schema name - which is important when performing schema duplication.
     # Storey.suffix = "_suffix"
 
+    # Defines schemas that should always stay in the search path, apart from the one you switched to.
+    # Storey.persistent_schemas = %w(hstore)
+
 # Methods
 
 ## schemas

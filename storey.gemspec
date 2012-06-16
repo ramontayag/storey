@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "pg", "~> 0.12.2"
   s.add_development_dependency "database_cleaner"
-  s.add_development_dependency "ruby-debug"
+  s.add_development_dependency "pry"
   s.add_runtime_dependency "rails", "~> 3.1.3"
 end

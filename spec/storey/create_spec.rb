@@ -99,4 +99,10 @@ describe Storey, "#create" do
       end
     end
   end
+
+  context 'when creating a reserved schema' do
+    it 'should fail' do
+      expect {Storey.create('hstore')}.to raise_error(ArgumentError, "'hstore' is a reserved schema name")
+    end
+  end
 end

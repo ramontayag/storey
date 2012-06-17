@@ -21,6 +21,27 @@ describe Storey, "#duplicate!" do
         Post.find_by_name("Hi").should_not be_nil
       end
     end
+
+    context 'when setting structure_only: true' do
+      before do
+        Storey.duplicate! 'ricky', 'bobby', structure_only: true
+      end
+
+      it 'should create a duplicate schema but copy the structure only' do
+        Storey.schemas.should include('bobby')
+        Storey.switch 'bobby' do
+          Post.count.should == 0
+        end
+      end
+
+      it 'should copy all the schema_migrations over' do
+        public_schema_migrations = Storey.switch { ActiveRecord::Migrator.get_all_versions }
+        Storey.switch 'bobby' do
+          ActiveRecord::Migrator.get_all_versions.should == public_schema_migrations
+        end
+      end
+    end
+
   end
 
   it "should clear the PGPASSWORD environment variable" do

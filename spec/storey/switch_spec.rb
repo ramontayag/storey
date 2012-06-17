@@ -141,5 +141,20 @@ describe Storey, "#switch" do
       end
     end
 
+    context 'when switching to one of the persistent schemas' do
+      before do
+        persistent_schemas = %w(handle bar foo)
+        persistent_schemas.each do |schema|
+          Storey.create schema
+        end
+        Storey.persistent_schemas = persistent_schemas
+      end
+
+      it 'should not have duplicate schemas in the search path' do
+        Storey.switch 'bar'
+        Storey.schema.should == %{bar,handle,foo}
+      end
+    end
+
   end
 end

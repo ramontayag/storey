@@ -106,7 +106,7 @@ module Storey
     self.persistent_schemas.each do |schema|
       path << suffixify(schema)
     end
-    path.join(',')
+    path.uniq.join(',')
   end
 
   def reload_config!

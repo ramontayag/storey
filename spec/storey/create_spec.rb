@@ -17,18 +17,6 @@ describe Storey, "#create" do
     end
   end
 
-  # TODO: Remove if v0.3.0
-  context "when load_database_schema: false" do
-    it "should not load the structure" do
-      Kernel.should_receive(:warn)
-      Storey.create "foobar", load_database_schema: false do
-        tables = ActiveRecord::Base.connection.tables
-        tables.should_not include('companies')
-        tables.should_not include('posts')
-      end
-    end
-  end
-
   context "when load_database_schema: false" do
     it "should not load the structure" do
       Storey.create "foobar", load_database_structure: false do

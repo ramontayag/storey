@@ -43,11 +43,6 @@ module Storey
     fail ArgumentError, "'#{name}' is a reserved schema name" if RESERVED_SCHEMAS.include?(name) && !options[:force]
     fail Storey::SchemaExists, %{The schema "#{name}" already exists.} if self.schemas.include?(name)
 
-    if !options[:load_database_schema].nil?
-      options[:load_database_structure] ||= options[:load_database_schema]
-      Kernel.warn %{DEPRECATION: The option "load_database_schema is deprecated and will be removed in version v0.3.0. Use "load_database_structure: #{options[:load_database_structure]}" instead."}
-    end
-
     options[:load_database_structure] = true if options[:load_database_structure].nil?
 
     if options[:load_database_structure]

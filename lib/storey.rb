@@ -39,21 +39,29 @@ module Storey
 
   def create(name, options={}, &block)
     fail ArgumentError, "Must pass in a valid schema name" if name.blank?
+    fail Storey::SchemaExists, %{The schema "#{name}" already exists.} if self.schemas.include?(name)
 
-    options[:load_database_schema] = true unless options.has_key?(:load_database_schema)
-
-    name = suffixify(name)
-    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{name}"
-    switch name do
-      load_database_schema if options[:load_database_schema] == true
-      block.call if block_given?
+    if !options[:load_database_schema].nil?
+      options[:load_database_structure] ||= options[:load_database_schema]
+      Kernel.warn %{DEPRECATION: The option "load_database_schema is deprecated and will be removed in version v0.3.0. Use "load_database_structure: #{options[:load_database_structure]}" instead."}
     end
-  rescue ActiveRecord::StatementInvalid => e
-    if e.to_s =~ /schema ".+" already exists/
-      fail Storey::SchemaExists, %{The schema "#{name}" already exists.}
+
+    options[:load_database_structure] = true if options[:load_database_structure].nil?
+
+    if options[:load_database_structure]
+      duplicator = Storey::Duplicator.new 'public', name, structure_only: true
+      duplicator.perform!
+      name = suffixify name
+      switch name do
+        block.call if block_given?
+      end
     else
-      raise e
+      self.create_plain_schema name
     end
+  end
+
+  def create_plain_schema(schema_name)
+    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{schema_name}"
   end
 
   def schemas(options={})
@@ -119,16 +127,20 @@ module Storey
     Rails.configuration.database_configuration[Rails.env].with_indifferent_access
   end
 
-  def duplicate!(from_schema, to_schema)
-    duplicator = Duplicator.new from_schema, to_schema
+  def duplicate!(from_schema, to_schema, options={})
+    duplicator = Duplicator.new from_schema, to_schema, options
     duplicator.perform!
   end
 
-  def suffixify(name)
-    if Storey.suffix && !name.include?(Storey.suffix) && name != self.default_search_path
-      "#{name}#{Storey.suffix}"
+  def suffixify(schema_name)
+
+    if Storey.suffix &&
+      !schema_name.include?(Storey.suffix) &&
+      !matches_default_search_path?(schema_name)
+
+      "#{schema_name}#{Storey.suffix}"
     else
-      name
+      schema_name
     end
   end
 
@@ -149,6 +161,15 @@ module Storey
     search_path
   end
 
+  def matches_default_search_path?(schema_name)
+    paths = self.default_search_path.split(',')
+    paths.each do |path|
+      return true if path == schema_name
+    end
+    return true if self.default_search_path == schema_name
+    return false
+  end
+
   protected
 
   def schema_migrations
@@ -158,20 +179,6 @@ module Storey
   def reset
     path = self.schema_search_path_for(self.default_search_path)
     ActiveRecord::Base.connection.schema_search_path = path
-  end
-
-  # Loads the Rails schema.rb into the current schema
-  def load_database_schema
-    ActiveRecord::Schema.verbose = false # do not log schema load output.
-    load_or_abort("#{Rails.root}/db/schema.rb")
-  end
-
-  def load_or_abort(file)
-    if File.exists?(file)
-      load(file)
-    else
-      abort %{#{file} doesn't exist yet}
-    end
   end
 
   def process_excluded_models

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Storey, "#create" do
-  it "should load the schema.rb into the new schema" do
+  it "should load the database structure into the new schema" do
     public_tables = Storey.switch { ActiveRecord::Base.connection.tables }.sort
     Storey.create "foobar" do
       foobar_tables = ActiveRecord::Base.connection.tables.sort
@@ -17,10 +17,25 @@ describe Storey, "#create" do
     end
   end
 
-  context ":load_database_schema => false" do
-    it "should not load the schema.rb" do
-      Storey.should_not_receive(:load_database_schema)
-      Storey.create "foobar", :load_database_schema => false
+  # TODO: Remove if v0.3.0
+  context "when load_database_schema: false" do
+    it "should not load the structure" do
+      Kernel.should_receive(:warn)
+      Storey.create "foobar", load_database_schema: false do
+        tables = ActiveRecord::Base.connection.tables
+        tables.should_not include('companies')
+        tables.should_not include('posts')
+      end
+    end
+  end
+
+  context "when load_database_schema: false" do
+    it "should not load the structure" do
+      Storey.create "foobar", load_database_structure: false do
+        tables = ActiveRecord::Base.connection.tables
+        tables.should_not include('companies')
+        tables.should_not include('posts')
+      end
     end
   end
 

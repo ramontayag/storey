@@ -3,13 +3,16 @@ class Storey::Duplicator
   SOURCE_DUMP_PATH = File.join DUMP_PATH, 'source'
   TARGET_DUMP_PATH = File.join DUMP_PATH, 'target'
 
-  attr_accessor :source_schema, :target_schema, :source_file, :target_file
+  attr_accessor :source_schema, :target_schema, :source_file, :target_file, :structure_only, :file_prefix
 
-  def initialize(from_schema, to_schema)
+  def initialize(from_schema, to_schema, options={})
+    self.structure_only = options[:structure_only] || false
+
     self.source_schema = Storey.suffixify from_schema
     self.target_schema = Storey.suffixify to_schema
-    self.source_file   = File.join SOURCE_DUMP_PATH, "#{Time.now.to_i}_#{self.source_schema}.sql"
-    self.target_file   = File.join TARGET_DUMP_PATH, "#{Time.now.to_i}_#{self.target_schema}.sql"
+    self.file_prefix = "#{Time.now.to_i}_#{rand(100000)}"
+    self.source_file   = File.join SOURCE_DUMP_PATH, "#{self.file_prefix}_#{self.source_schema}.sql"
+    self.target_file   = File.join TARGET_DUMP_PATH, "#{self.file_prefix}_#{self.target_schema}.sql"
   end
 
   def perform!
@@ -29,7 +32,9 @@ class Storey::Duplicator
     options[:file]     ||= self.source_file
     options[:schema]   ||= self.source_schema
 
-    switches = options.map { |k, v| "--#{k}=#{v}" }.join(" ")
+    switches = options.map { |k, v| "--#{k}=#{v}" }
+    switches << '--schema-only' if self.structure_only
+    switches = switches.join(" ")
 
     `pg_dump #{switches} #{Storey.database_config[:database]}`
   end
@@ -46,7 +51,25 @@ class Storey::Duplicator
 
     switches = options.map { |k, v| "--#{k}=#{v}" }.join(" ")
 
+    if duplicating_from_default?
+      # Since we are copying the source schema and we're after structure only,
+      # the dump_schema ended up creating a SQL file without the "CREATE SCHEMA" command
+      # thus we have to create it manually
+      ::Storey.create_plain_schema self.target_schema
+    end
+
+    source_schema_migrations = ::Storey.switch(self.source_schema) do
+      ActiveRecord::Migrator.get_all_versions
+    end
+
     `psql #{switches}`
+
+    ::Storey.switch self.target_schema do
+      source_schema_migrations.each do |version|
+        ActiveRecord::Base.connection.execute "INSERT INTO schema_migrations (version) VALUES ('#{version}');"
+      end
+    end
+
     ENV['PGPASSWORD'] = nil
   end
 
@@ -57,5 +80,9 @@ class Storey::Duplicator
         File.open(self.target_file, 'a') {|tf| tf.puts new_line}
       end
     end
+  end
+
+  def duplicating_from_default?
+    ::Storey.matches_default_search_path?(self.source_schema) && self.structure_only
   end
 end

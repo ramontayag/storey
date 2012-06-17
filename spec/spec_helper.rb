@@ -51,6 +51,7 @@ RSpec.configure do |config|
     # we don't want any test that has set this to keep it hanging around
     # screwing with our migration
     ENV['STEP'] = ENV['VERSION'] = nil
+    Rails.application.config.active_record.schema_format = :ruby
     @rake["db:migrate"].invoke
   end
 end

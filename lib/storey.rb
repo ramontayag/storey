@@ -4,11 +4,12 @@ require "active_support/core_ext/module" # so we can use mattr_accessor
 require 'storey/railtie' if defined?(Rails)
 require 'storey/exceptions'
 require 'storey/migrator'
+require 'storey/duplicator'
+require 'storey/hstore'
 
 module Storey
   extend self
-
-  autoload :Duplicator, 'storey/duplicator'
+  RESERVED_SCHEMAS = %w(hstore)
 
   mattr_accessor :suffix, :default_search_path, :persistent_schemas
   mattr_reader :excluded_models
@@ -39,12 +40,8 @@ module Storey
 
   def create(name, options={}, &block)
     fail ArgumentError, "Must pass in a valid schema name" if name.blank?
+    fail ArgumentError, "'#{name}' is a reserved schema name" if RESERVED_SCHEMAS.include?(name) && !options[:force]
     fail Storey::SchemaExists, %{The schema "#{name}" already exists.} if self.schemas.include?(name)
-
-    if !options[:load_database_schema].nil?
-      options[:load_database_structure] ||= options[:load_database_schema]
-      Kernel.warn %{DEPRECATION: The option "load_database_schema is deprecated and will be removed in version v0.3.0. Use "load_database_structure: #{options[:load_database_structure]}" instead."}
-    end
 
     options[:load_database_structure] = true if options[:load_database_structure].nil?
 
@@ -61,7 +58,7 @@ module Storey
   end
 
   def create_plain_schema(schema_name)
-    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{schema_name}"
+    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{self.suffixify schema_name}"
   end
 
   def schemas(options={})

@@ -1,18 +1,17 @@
 class Storey::Duplicator
-  DUMP_PATH        = File.join Rails.root, 'tmp', 'schema_dumps'
-  SOURCE_DUMP_PATH = File.join DUMP_PATH, 'source'
-  TARGET_DUMP_PATH = File.join DUMP_PATH, 'target'
-
-  attr_accessor :source_schema, :target_schema, :source_file, :target_file, :structure_only, :file_prefix
+  attr_accessor :source_schema, :target_schema, :source_file, :target_file, :structure_only, :file_prefix, :dump_path, :source_dump_path, :target_dump_path
 
   def initialize(from_schema, to_schema, options={})
+    self.dump_path = File.join Rails.root, 'tmp', 'schema_dumps'
+    self.source_dump_path = File.join self.dump_path, 'source'
+    self.target_dump_path = File.join self.dump_path, 'target'
     self.structure_only = options[:structure_only] || false
 
     self.source_schema = Storey.suffixify from_schema
     self.target_schema = Storey.suffixify to_schema
     self.file_prefix = "#{Time.now.to_i}_#{rand(100000)}"
-    self.source_file   = File.join SOURCE_DUMP_PATH, "#{self.file_prefix}_#{self.source_schema}.sql"
-    self.target_file   = File.join TARGET_DUMP_PATH, "#{self.file_prefix}_#{self.target_schema}.sql"
+    self.source_file   = File.join self.source_dump_path, "#{self.file_prefix}_#{self.source_schema}.sql"
+    self.target_file   = File.join self.target_dump_path, "#{self.file_prefix}_#{self.target_schema}.sql"
   end
 
   def perform!
@@ -40,7 +39,7 @@ class Storey::Duplicator
   end
 
   def prepare_schema_dump_directories
-    [SOURCE_DUMP_PATH, TARGET_DUMP_PATH].each { |d| FileUtils.mkdir_p(d) }
+    [self.source_dump_path, self.target_dump_path].each { |d| FileUtils.mkdir_p(d) }
   end
 
   def load_schema(options={})

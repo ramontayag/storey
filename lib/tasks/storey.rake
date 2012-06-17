@@ -1,5 +1,12 @@
 namespace :storey do
 
+  namespace :hstore do
+    desc "Install hstore into the hstore#{Storey.suffix} schema"
+    task :install => :environment do
+      Storey::Hstore.install
+    end
+  end
+
   desc "Migrate all schemas including public"
   task :migrate => "db:migrate" do
     Storey.schemas.each do |schema|

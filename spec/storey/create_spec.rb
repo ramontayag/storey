@@ -17,18 +17,6 @@ describe Storey, "#create" do
     end
   end
 
-  # TODO: Remove if v0.3.0
-  context "when load_database_schema: false" do
-    it "should not load the structure" do
-      Kernel.should_receive(:warn)
-      Storey.create "foobar", load_database_schema: false do
-        tables = ActiveRecord::Base.connection.tables
-        tables.should_not include('companies')
-        tables.should_not include('posts')
-      end
-    end
-  end
-
   context "when load_database_schema: false" do
     it "should not load the structure" do
       Storey.create "foobar", load_database_structure: false do
@@ -99,4 +87,20 @@ describe Storey, "#create" do
       end
     end
   end
+
+  context 'when creating a reserved schema' do
+    it 'should fail' do
+      expect {Storey.create('hstore')}.to raise_error(ArgumentError, "'hstore' is a reserved schema name")
+    end
+
+    context 'when force: true is passed in' do
+      it 'should create the schema' do
+        expect {
+          Storey.create 'hstore', force: true
+        }.to_not raise_error(ArgumentError)
+        Storey.schemas.should include('hstore')
+      end
+    end
+  end
+
 end

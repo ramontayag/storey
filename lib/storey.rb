@@ -5,6 +5,7 @@ require 'storey/railtie' if defined?(Rails)
 require 'storey/exceptions'
 require 'storey/migrator'
 require 'storey/duplicator'
+require 'storey/hstore'
 
 module Storey
   extend self
@@ -39,7 +40,7 @@ module Storey
 
   def create(name, options={}, &block)
     fail ArgumentError, "Must pass in a valid schema name" if name.blank?
-    fail ArgumentError, "'#{name}' is a reserved schema name" if RESERVED_SCHEMAS.include?(name)
+    fail ArgumentError, "'#{name}' is a reserved schema name" if RESERVED_SCHEMAS.include?(name) && !options[:force]
     fail Storey::SchemaExists, %{The schema "#{name}" already exists.} if self.schemas.include?(name)
 
     if !options[:load_database_schema].nil?

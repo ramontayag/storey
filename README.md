@@ -86,3 +86,9 @@ Copies a schema with all data under a new name. Best used in conjunction with `S
 Usage:
 
     Storey.duplicate!("original_schema", "new_schema")
+
+# Rake tasks
+
+## storey:hstore:install
+
+Run `rake storey:hstore:install` to install hstore extension into the hstore schema. Ensure that 'hstore' is one of the persistent schemas.

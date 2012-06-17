@@ -104,5 +104,15 @@ describe Storey, "#create" do
     it 'should fail' do
       expect {Storey.create('hstore')}.to raise_error(ArgumentError, "'hstore' is a reserved schema name")
     end
+
+    context 'when force: true is passed in' do
+      it 'should create the schema' do
+        expect {
+          Storey.create 'hstore', force: true
+        }.to_not raise_error(ArgumentError)
+        Storey.schemas.should include('hstore')
+      end
+    end
   end
+
 end

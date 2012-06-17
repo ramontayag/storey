@@ -60,7 +60,7 @@ module Storey
   end
 
   def create_plain_schema(schema_name)
-    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{schema_name}"
+    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{self.suffixify schema_name}"
   end
 
   def schemas(options={})

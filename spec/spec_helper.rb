@@ -9,9 +9,21 @@ require 'database_cleaner'
 # Include rake so we can instantiate the @rake variable and call rake tasks
 require 'rake'
 
-require 'ruby-debug'
+require 'pry'
 
 RSpec.configure do |config|
+  config.before(:suite) do
+    # Clean the public schema
+    Storey.switch do
+      tables = ActiveRecord::Base.connection.tables
+      # Don't invoke DatabaseCleaner if there are no tables,
+      # since that library chokes and tries to drop tables without names
+      if tables.size != 1 or tables[0] != 'schema_migrations'
+        DatabaseCleaner.clean_with :truncation
+      end
+    end
+  end
+
   config.before(:each) do
     # We don't want configuration to leak into other tests
     Storey.reload_config!

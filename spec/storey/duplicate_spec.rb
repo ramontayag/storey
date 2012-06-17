@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Storey, "#duplicate!" do
   before do
     # Always clear the tmp file of the Rails app
-    FileUtils.rm_rf(Storey::Duplicator::DUMP_PATH)
+    tmp_dir = File.join Rails.root, 'tmp'
+    FileUtils.rm_rf(tmp_dir)
   end
 
   context "when there's no suffix set" do

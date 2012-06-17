@@ -4,11 +4,10 @@ require "active_support/core_ext/module" # so we can use mattr_accessor
 require 'storey/railtie' if defined?(Rails)
 require 'storey/exceptions'
 require 'storey/migrator'
+require 'storey/duplicator'
 
 module Storey
   extend self
-
-  autoload :Duplicator, 'storey/duplicator'
 
   mattr_accessor :suffix, :default_search_path, :persistent_schemas
   mattr_reader :excluded_models

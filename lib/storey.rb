@@ -6,6 +6,7 @@ require 'storey/exceptions'
 require 'storey/migrator'
 require 'storey/duplicator'
 require 'storey/hstore'
+require 'storey/dumper'
 
 module Storey
   extend self

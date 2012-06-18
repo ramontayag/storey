@@ -8,10 +8,8 @@ namespace :storey do
   end
 
   desc "Migrate all schemas including public"
-  task :migrate => "db:migrate" do
-    Storey.schemas.each do |schema|
-      Storey::Migrator.migrate schema
-    end
+  task migrate: :environment do
+    Storey::Migrator.migrate_all
   end
 
   desc "Rolls the schema back to the previous version (specify steps w/ STEP=n) across all schemas."

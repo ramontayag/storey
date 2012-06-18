@@ -1,6 +1,14 @@
 module Storey::Migrator
   extend self
 
+  def migrate_all
+    self.migrate 'public'
+    Storey::Dumper.dump
+    Storey.schemas(public: false).each do |schema|
+      self.migrate schema
+    end
+  end
+
   def migrate(schema)
     Storey.switch schema do
       ActiveRecord::Migrator.migrate ActiveRecord::Migrator.migrations_path

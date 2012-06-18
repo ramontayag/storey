@@ -7,16 +7,31 @@ describe Storey::Migrator do
     Storey.create @schema_1
   end
 
-  describe "#migrate" do
-    it "should connect to new db, then reset when done" do
-      ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-      ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
-      Storey::Migrator.migrate(@schema_1)
+  describe '.migrate_all' do
+    it 'should migrate the default search path first, then all available schemas' do
+      described_class.should_receive(:migrate).with('public').ordered
+      described_class.should_receive(:migrate).with(@schema_1).ordered
+      described_class.migrate_all
     end
 
-    it "should migrate db" do
-      ActiveRecord::Migrator.should_receive(:migrate)
-      Storey::Migrator.migrate(@schema_1)
+    it 'should dump the database' do
+      Storey::Dumper.should_receive(:dump)
+      described_class.migrate_all
+    end
+  end
+
+  describe '.migrate' do
+    context 'given a schema' do
+      it 'should connect to new db, then reset when done' do
+        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
+        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        Storey::Migrator.migrate(@schema_1)
+      end
+
+      it "should migrate db" do
+        ActiveRecord::Migrator.should_receive(:migrate)
+        Storey::Migrator.migrate(@schema_1)
+      end
     end
   end
 

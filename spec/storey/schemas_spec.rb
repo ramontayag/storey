@@ -47,5 +47,6 @@ describe Storey, "#schemas" do
         Storey.schemas(:public => false).should_not include("public")
       end
     end
+
   end
 end

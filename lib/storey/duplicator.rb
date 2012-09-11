@@ -57,19 +57,33 @@ class Storey::Duplicator
       ::Storey.create_plain_schema self.target_schema
     end
 
-    source_schema_migrations = ::Storey.switch(self.source_schema) do
-      ActiveRecord::Migrator.get_all_versions
-    end
-
     `psql #{switches}`
 
-    ::Storey.switch self.target_schema do
-      source_schema_migrations.each do |version|
-        ActiveRecord::Base.connection.execute "INSERT INTO schema_migrations (version) VALUES ('#{version}');"
-      end
-    end
+    copy_source_schema_migrations
 
     ENV['PGPASSWORD'] = nil
+  end
+
+  def copy_source_schema_migrations
+    ::Storey.switch self.target_schema do
+      source_schema_migrations.each do |version|
+        unless target_schema_migrations.include?(version)
+          ActiveRecord::Base.connection.execute "INSERT INTO schema_migrations (version) VALUES ('#{version}');"
+        end
+      end
+    end
+  end
+
+  def source_schema_migrations
+    ::Storey.switch(self.source_schema) do
+      ActiveRecord::Migrator.get_all_versions
+    end
+  end
+
+  def target_schema_migrations
+    ::Storey.switch(self.target_schema) do
+      ActiveRecord::Migrator.get_all_versions
+    end
   end
 
   def replace_occurances

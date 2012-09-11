@@ -88,6 +88,10 @@ module Storey
   end
 
   def switch(name=nil, &block)
+    if ActiveRecord::Base.connection.open_transactions > 0
+      fail Storey::WithinTransaction, 'Cannot switch while in a database transaction'
+    end
+
     if block_given?
       original_schema = schema
       switch name

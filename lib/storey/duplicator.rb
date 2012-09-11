@@ -43,12 +43,8 @@ class Storey::Duplicator
   end
 
   def load_schema(options={})
-    options[:host]     ||= Storey.database_config[:host] unless Storey.database_config[:host].blank?
-    options[:dbname]   ||= Storey.database_config[:database]
-    options[:username] ||= Storey.database_config[:username]
     options[:file] ||= self.target_file
-
-    switches = options.map { |k, v| "--#{k}=#{v}" }.join(" ")
+    switches = Storey.command_line_switches(options)
 
     if duplicating_from_default?
       # Since we are copying the source schema and we're after structure only,

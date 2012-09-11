@@ -59,7 +59,18 @@ module Storey
   end
 
   def create_plain_schema(schema_name)
-    ActiveRecord::Base.connection.execute "CREATE SCHEMA #{self.suffixify schema_name}"
+    switches = self.command_line_switches(:command => %{"CREATE SCHEMA #{self.suffixify schema_name}"})
+    command = "psql #{switches}"
+    system(command)
+  end
+
+  def command_line_switches(options={})
+    switches = {}
+    switches[:host] = self.database_config[:host] if self.database_config.has_key?(:host)
+    switches[:dbname] = self.database_config[:database]
+    switches[:username] = self.database_config[:username]
+    switches = switches.merge(options)
+    switches.map {|k, v| "--#{k}=#{v}"}.join(' ')
   end
 
   def schemas(options={})
@@ -88,10 +99,6 @@ module Storey
   end
 
   def switch(name=nil, &block)
-    if ActiveRecord::Base.connection.open_transactions > 0
-      fail Storey::WithinTransaction, 'Cannot switch while in a database transaction'
-    end
-
     if block_given?
       original_schema = schema
       switch name

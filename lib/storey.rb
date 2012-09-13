@@ -113,6 +113,9 @@ module Storey
   rescue ActiveRecord::StatementInvalid => e
     if e.to_s =~ /invalid value for parameter "search_path"/
       fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
+    elsif e.to_s =~ /relation ".*" does not exist at character \d+/
+      warn "Still unsure why the following error occurs, but see https://github.com/ramontayag/storey/issues/11"
+      raise e
     else
       raise e
     end

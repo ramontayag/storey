@@ -22,16 +22,6 @@ describe Storey, "#switch" do
     end
   end
 
-  context 'when in a database transaction' do
-    it 'should raise an exception' do
-      Storey.create 'foobar'
-      ActiveRecord::Base.transaction do
-        expect {Storey.switch 'foobar'}.
-          to raise_error(Storey::WithinTransaction, 'Cannot switch while in a database transaction')
-      end
-    end
-  end
-
   context "with a schema passed" do
     before do
       Storey.create "foobar"

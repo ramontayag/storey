@@ -9,6 +9,15 @@ describe Storey, "#create" do
     end
   end
 
+  context 'when in a database transaction and loading the database structure' do
+    it 'should not blow up and continue to create the schema' do
+      ActiveRecord::Base.transaction do
+        Storey.create 'foobar'
+      end
+      Storey.schemas.should include('foobar')
+    end
+  end
+
   it "should copy the schema_migrations over" do
     Storey.create "foobar"
     public_schema_migrations = Storey.switch { ActiveRecord::Migrator.get_all_versions }

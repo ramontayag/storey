@@ -155,7 +155,6 @@ module Storey
   end
 
   def suffixify(schema_name)
-
     if Storey.suffix &&
       !schema_name.include?(Storey.suffix) &&
       !matches_default_search_path?(schema_name)

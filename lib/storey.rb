@@ -108,12 +108,15 @@ module Storey
     else
       reset and return if name.blank?
       path = self.schema_search_path_for(name)
+
+      unless self.schema_exists?(name)
+        fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
+      end
+
       ActiveRecord::Base.connection.schema_search_path = path
     end
   rescue ActiveRecord::StatementInvalid => e
-    if e.to_s =~ /invalid value for parameter "search_path"/
-      fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
-    elsif e.to_s =~ /relation ".*" does not exist at character \d+/
+    if e.to_s =~ /relation ".*" does not exist at character \d+/
       warn "Still unsure why the following error occurs, but see https://github.com/ramontayag/storey/issues/11"
       raise e
     else
@@ -122,9 +125,10 @@ module Storey
   end
 
   def schema_exists?(name)
-    self.matches_default_search_path?(name) ||
+    schema_name = self.suffixify(name)
+    self.matches_default_search_path?(schema_name) ||
       self.schemas(suffix: self.suffix.present?).
-      include?(self.schema_search_path_for(name))
+      include?(schema_name)
   end
 
   def schema_search_path_for(schema_name)

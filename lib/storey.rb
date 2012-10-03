@@ -121,6 +121,12 @@ module Storey
     end
   end
 
+  def schema_exists?(name)
+    self.matches_default_search_path?(name) ||
+      self.schemas(suffix: self.suffix.present?).
+      include?(self.schema_search_path_for(name))
+  end
+
   def schema_search_path_for(schema_name)
     path = [suffixify(schema_name)]
     self.persistent_schemas.each do |schema|

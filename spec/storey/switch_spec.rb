@@ -60,13 +60,15 @@ describe Storey, "#switch" do
       end
 
       it "should raise an error naming the schema with suffix" do
-        expect {Storey.switch "babo"}.to raise_error(Storey::SchemaNotFound, %{The schema "babo_rock" cannot be found.})
+        expect {Storey.switch "babo"}.
+          to raise_error(Storey::SchemaNotFound, %{The schema "babo_rock" cannot be found.})
       end
     end
 
     context "when the suffix is not set" do
       it "should raise an error" do
-        expect {Storey.switch "babo"}.to raise_error(Storey::SchemaNotFound, %{The schema "babo" cannot be found.})
+        expect {Storey.switch "babo"}.
+          to raise_error(Storey::SchemaNotFound, %{The schema "babo" cannot be found.})
       end
     end
   end

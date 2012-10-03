@@ -117,7 +117,7 @@ module Storey
     end
   rescue ActiveRecord::StatementInvalid => e
     if e.to_s =~ /relation ".*" does not exist at character \d+/
-      warn "Still unsure why the following error occurs, but see https://github.com/ramontayag/storey/issues/11"
+      warn "See https://github.com/ramontayag/storey/issues/11"
       raise e
     else
       raise e

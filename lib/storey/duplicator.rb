@@ -2,6 +2,8 @@ class Storey::Duplicator
   attr_accessor :source_schema, :target_schema, :source_file, :target_file, :structure_only, :file_prefix, :dump_path, :source_dump_path, :target_dump_path
 
   def initialize(from_schema, to_schema, options={})
+    fail Storey::SchemaNotFound, "cannot duplicate from nil schema" unless from_schema
+
     self.dump_path = File.join Rails.root, 'tmp', 'schema_dumps'
     self.source_dump_path = File.join self.dump_path, 'source'
     self.target_dump_path = File.join self.dump_path, 'target'

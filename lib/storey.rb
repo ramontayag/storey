@@ -9,17 +9,22 @@ require 'storey/hstore'
 require 'storey/dumper'
 
 module Storey
-  extend self
   RESERVED_SCHEMAS = %w(hstore)
 
-  mattr_accessor :suffix, :default_search_path, :persistent_schemas
+  mattr_accessor :suffix, :persistent_schemas
+  mattr_writer :default_search_path
   mattr_reader :excluded_models
+  extend self
 
   def init
-    @@default_search_path = schema
+    self.default_search_path = self.schema
     self.excluded_models ||= []
     self.persistent_schemas ||= []
     process_excluded_models
+  end
+
+  def default_search_path
+    ([@@default_search_path] + self.persistent_schemas).join(',')
   end
 
   def excluded_models=(array)
@@ -126,15 +131,24 @@ module Storey
 
   def schema_exists?(name)
     schema_name = self.suffixify(name)
-    self.matches_default_search_path?(schema_name) ||
-      self.schemas(suffix: self.suffix.present?).
-      include?(schema_name)
+
+    schemas_in_db = self.schemas(suffix: self.suffix.present?)
+    schemas_in_db << %("$user")
+    schema_names = schema_name.split(',')
+    schemas_not_in_db = schema_names - schemas_in_db
+    schemas_not_in_db.empty?
+    # existence = schema_names.map do |s|
+    #   schemas_in_db.include?(s)
+    # end
+    # return false if existence.include?(false)
+    # true
   end
 
   def schema_search_path_for(schema_name)
+    schema_names = schema_name.split(',')
     path = [suffixify(schema_name)]
     self.persistent_schemas.each do |schema|
-      path << suffixify(schema)
+      path << suffixify(schema) unless schema_names.include?(schema)
     end
     path.uniq.join(',')
   end
@@ -187,8 +201,7 @@ module Storey
     paths.each do |path|
       return true if path == schema_name
     end
-    return true if self.default_search_path == schema_name
-    return false
+    self.default_search_path == schema_name
   end
 
   protected

@@ -9,17 +9,22 @@ require 'storey/hstore'
 require 'storey/dumper'
 
 module Storey
-  extend self
   RESERVED_SCHEMAS = %w(hstore)
 
-  mattr_accessor :suffix, :default_search_path, :persistent_schemas
+  mattr_accessor :suffix, :persistent_schemas
+  mattr_writer :default_search_path
   mattr_reader :excluded_models
+  extend self
 
   def init
-    @@default_search_path = schema
+    self.default_search_path = self.schema
     self.excluded_models ||= []
     self.persistent_schemas ||= []
     process_excluded_models
+  end
+
+  def default_search_path
+    ([@@default_search_path] + self.persistent_schemas).join(',')
   end
 
   def excluded_models=(array)
@@ -60,8 +65,7 @@ module Storey
 
   def create_plain_schema(schema_name)
     switches = self.command_line_switches(:command => %{"CREATE SCHEMA #{self.suffixify schema_name}"})
-    command = "psql #{switches}"
-    system(command)
+    `psql #{switches}`
   end
 
   def command_line_switches(options={})
@@ -108,23 +112,42 @@ module Storey
     else
       reset and return if name.blank?
       path = self.schema_search_path_for(name)
+
+      unless self.schema_exists?(name)
+        fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
+      end
+
       ActiveRecord::Base.connection.schema_search_path = path
     end
   rescue ActiveRecord::StatementInvalid => e
-    if e.to_s =~ /invalid value for parameter "search_path"/
-      fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
-    elsif e.to_s =~ /relation ".*" does not exist at character \d+/
-      warn "Still unsure why the following error occurs, but see https://github.com/ramontayag/storey/issues/11"
+    if e.to_s =~ /relation ".*" does not exist at character \d+/
+      warn "See https://github.com/ramontayag/storey/issues/11"
       raise e
     else
       raise e
     end
   end
 
+  def schema_exists?(name)
+    schema_name = self.suffixify(name)
+
+    schemas_in_db = self.schemas(suffix: self.suffix.present?)
+    schemas_in_db << %("$user")
+    schema_names = schema_name.split(',')
+    schemas_not_in_db = schema_names - schemas_in_db
+    schemas_not_in_db.empty?
+    # existence = schema_names.map do |s|
+    #   schemas_in_db.include?(s)
+    # end
+    # return false if existence.include?(false)
+    # true
+  end
+
   def schema_search_path_for(schema_name)
+    schema_names = schema_name.split(',')
     path = [suffixify(schema_name)]
     self.persistent_schemas.each do |schema|
-      path << suffixify(schema)
+      path << suffixify(schema) unless schema_names.include?(schema)
     end
     path.uniq.join(',')
   end
@@ -145,7 +168,6 @@ module Storey
   end
 
   def suffixify(schema_name)
-
     if Storey.suffix &&
       !schema_name.include?(Storey.suffix) &&
       !matches_default_search_path?(schema_name)
@@ -178,8 +200,7 @@ module Storey
     paths.each do |path|
       return true if path == schema_name
     end
-    return true if self.default_search_path == schema_name
-    return false
+    self.default_search_path == schema_name
   end
 
   protected

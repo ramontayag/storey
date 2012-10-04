@@ -7,6 +7,13 @@ describe Storey, "#duplicate!" do
     FileUtils.rm_rf(tmp_dir)
   end
 
+  context 'when the target schema is nil' do
+    it 'should raise an error' do
+      expect { Storey.duplicate! nil, 'new' }.
+        to raise_error(Storey::SchemaNotFound, "cannot duplicate from nil schema")
+    end
+  end
+
   context "when there's no suffix set" do
     before do
       Storey.create 'ricky' do

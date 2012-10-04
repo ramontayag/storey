@@ -65,8 +65,7 @@ module Storey
 
   def create_plain_schema(schema_name)
     switches = self.command_line_switches(:command => %{"CREATE SCHEMA #{self.suffixify schema_name}"})
-    command = "psql #{switches}"
-    system(command)
+    `psql #{switches}`
   end
 
   def command_line_switches(options={})

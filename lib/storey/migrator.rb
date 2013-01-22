@@ -25,6 +25,13 @@ module Storey::Migrator
     end
   end
 
+  def rollback_all(step=1)
+    Storey.schemas.each do |schema_name|
+      puts "rolling back #{schema_name}"
+      self.rollback(schema_name, step)
+    end
+  end
+
   def rollback(schema, step=1)
     Storey.switch schema do
       ActiveRecord::Migrator.rollback(

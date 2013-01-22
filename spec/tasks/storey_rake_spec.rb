@@ -83,22 +83,15 @@ describe Storey, "rake tasks" do
   end
 
   describe "storey:rollback" do
-    before do
-      @step = 2
-    end
-
     it "should rollback dbs" do
-      Storey::Migrator.should_receive(:rollback).exactly(@number_of_dbs+1).times
+      Storey::Migrator.should_receive(:rollback_all).once
       @rake['storey:rollback'].invoke
     end
 
     it "should rollback dbs STEP amt" do
-      Storey::Migrator.should_receive(:rollback).with(
-        anything,
-        @step
-      ).exactly(@number_of_dbs+1).times
-
-      ENV['STEP'] = @step.to_s
+      step = 2
+      Storey::Migrator.should_receive(:rollback_all).with(step).once
+      ENV['STEP'] = step.to_s
       @rake['storey:rollback'].invoke
     end
   end

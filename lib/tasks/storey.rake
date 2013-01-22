@@ -15,11 +15,7 @@ namespace :storey do
   desc "Rolls the schema back to the previous version (specify steps w/ STEP=n) across all schemas."
   task :rollback => 'db:rollback' do
     step = ENV['STEP'] ? ENV['STEP'].to_i : 1
-
-    Storey.schemas.each do |db|
-      puts("Rolling back #{db} database")
-      Storey::Migrator.rollback db, step
-    end
+    Storey::Migrator.rollback_all(step)
   end
 
   namespace :migrate do

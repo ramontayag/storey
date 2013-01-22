@@ -129,7 +129,7 @@ module Storey
       switch original_schema
       result
     else
-      reset and return if name.blank?
+      reset and return if name.blank? || name == 'public'
       path = self.schema_search_path_for(name)
 
       unless self.schema_exists?(name)

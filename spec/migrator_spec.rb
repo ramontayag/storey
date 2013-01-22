@@ -69,6 +69,7 @@ describe Storey::Migrator do
 
     describe '.rollback_all' do
       it 'should rollback all schemas exactly :steps times' do
+        steps = 2
         ['public', 'first_schema'].each do |schema|
           described_class.should_receive(:rollback).
             with(schema, steps).once

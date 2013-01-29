@@ -7,6 +7,8 @@ require 'storey/migrator'
 require 'storey/duplicator'
 require 'storey/hstore'
 require 'storey/dumper'
+require 'storey/ruby_dumper'
+require 'storey/sql_dumper'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)

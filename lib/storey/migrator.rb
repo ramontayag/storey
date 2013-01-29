@@ -27,13 +27,14 @@ module Storey::Migrator
 
   def rollback_all(step=1)
     Storey.schemas.each do |schema_name|
-      puts "rolling back #{schema_name}"
       self.rollback(schema_name, step)
     end
+    Storey::Dumper.dump
   end
 
   def rollback(schema, step=1)
     Storey.switch schema do
+      puts "= Rolling back `#{schema}` #{step} steps"
       ActiveRecord::Migrator.rollback(
         ActiveRecord::Migrator.migrations_path,
         step

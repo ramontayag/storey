@@ -33,6 +33,10 @@ module Storey
     paths.join(',')
   end
 
+  def default_schema?
+    self.schema == self.default_search_path
+  end
+
   def excluded_models=(array)
     @@excluded_models = array
     process_excluded_models

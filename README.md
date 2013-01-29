@@ -35,6 +35,14 @@ Usage:
     Storey.schemas
     Storey.schemas(:exclude_public => true)
 
+## default_schema?
+
+Returns true if the current schema is the default schema. Returns false otherwise. Useful for running migrations only for the public schema.
+
+Usage:
+
+    Storey.default_schema?
+
 ## create
 
 Accepts:

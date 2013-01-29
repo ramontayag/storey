@@ -1,6 +1,7 @@
 class Storey::Dumper
   def self.dump(options={})
-    case Rails.configuration.active_record.schema_format
+    schema_format = Rails.configuration.active_record.schema_format || :ruby
+    case schema_format
     when :sql  ; self.dump_structure_sql(options)
     when :ruby ; self.dump_schema_rb(options)
     end

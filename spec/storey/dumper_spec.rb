@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe Storey::Dumper do
   describe '.dump' do
+    context 'when schema_format is not set' do
+      it 'should default to dumping ruby format' do
+        Rails.configuration.active_record.schema_format = nil
+        described_class.should_receive(:dump_schema_rb).once
+        described_class.dump
+      end
+    end
+
     context 'when the schema_format is :ruby' do
       before do
         Rails.configuration.active_record.schema_format = :ruby

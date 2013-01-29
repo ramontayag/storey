@@ -1,5 +1,9 @@
 class Storey::SqlDumper
 
+  def self.dump(*args)
+    self.new(*args).dump
+  end
+
   def initialize(options={})
     @file = options[:file] || File.join(Rails.root, "db", "structure.sql")
   end

@@ -2,6 +2,10 @@ require 'active_record/schema_dumper'
 
 class Storey::RubyDumper
 
+  def self.dump(*args)
+    self.new(*args).dump
+  end
+
   def initialize(options={})
     default_file_path = File.join(Rails.root, 'db', 'schema.rb')
     @file = options[:file] || default_file_path

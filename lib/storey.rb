@@ -26,7 +26,11 @@ module Storey
   end
 
   def default_search_path
-    ([@@default_search_path] + self.persistent_schemas).join(',')
+    default_search_paths = @@default_search_path.split(',')
+    paths = default_search_paths + self.persistent_schemas
+    paths.uniq!
+    paths.compact!
+    paths.join(',')
   end
 
   def excluded_models=(array)

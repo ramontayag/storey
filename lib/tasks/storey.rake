@@ -13,7 +13,7 @@ namespace :storey do
   end
 
   desc "Rolls the schema back to the previous version (specify steps w/ STEP=n) across all schemas."
-  task :rollback => 'db:rollback' do
+  task :rollback => :environment do
     step = ENV['STEP'] ? ENV['STEP'].to_i : 1
     Storey::Migrator.rollback_all(step)
   end

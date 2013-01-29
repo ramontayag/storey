@@ -23,9 +23,8 @@ describe Storey, "#drop" do
 
   context "when the schema does not exist" do
     it "should raise an error" do
-      expect {
-        Storey.drop "foobar"
-      }.to raise_error(Storey::SchemaNotFound, %{The schema "foobar" cannot be found.})
+      expect { Storey.drop "foobar" }.
+        to raise_error(Storey::SchemaNotFound)
     end
   end
 end

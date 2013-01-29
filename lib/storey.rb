@@ -7,6 +7,8 @@ require 'storey/migrator'
 require 'storey/duplicator'
 require 'storey/hstore'
 require 'storey/dumper'
+require 'storey/ruby_dumper'
+require 'storey/sql_dumper'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -45,14 +47,27 @@ module Storey
   end
 
   def create(name, options={}, &block)
-    fail ArgumentError, "Must pass in a valid schema name" if name.blank?
-    fail ArgumentError, "'#{name}' is a reserved schema name" if RESERVED_SCHEMAS.include?(name) && !options[:force]
-    fail Storey::SchemaExists, %{The schema "#{name}" already exists.} if self.schemas.include?(name)
+    if name.blank?
+      fail ArgumentError, "Must pass in a valid schema name"
+    end
 
-    options[:load_database_structure] = true if options[:load_database_structure].nil?
+    if RESERVED_SCHEMAS.include?(name) && !options[:force]
+      fail ArgumentError, "'#{name}' is a reserved schema name"
+    end
+
+    if self.schemas.include?(name)
+      fail(Storey::SchemaExists,
+           %{The schema "#{name}" already exists.})
+    end
+
+    if options[:load_database_structure].nil?
+      options[:load_database_structure] = true
+    end
 
     if options[:load_database_structure]
-      duplicator = Storey::Duplicator.new 'public', name, structure_only: true
+      duplicator = Storey::Duplicator.new('public',
+                                          name,
+                                          structure_only: true)
       duplicator.perform!
       name = suffixify name
       switch name do
@@ -64,13 +79,17 @@ module Storey
   end
 
   def create_plain_schema(schema_name)
-    switches = self.command_line_switches(:command => %{"CREATE SCHEMA #{self.suffixify schema_name}"})
+    name = self.suffixify schema_name
+    command = %{"CREATE SCHEMA #{name}"}
+    switches = self.command_line_switches(command: command)
     `psql #{switches}`
   end
 
   def command_line_switches(options={})
     switches = {}
-    switches[:host] = self.database_config[:host] if self.database_config.has_key?(:host)
+    if self.database_config.has_key?(:host)
+      switches[:host] = self.database_config[:host]
+    end
     switches[:dbname] = self.database_config[:database]
     switches[:username] = self.database_config[:username]
     switches = switches.merge(options)
@@ -97,9 +116,11 @@ module Storey
 
   def drop(name)
     name = suffixify name
-    ActiveRecord::Base.connection.execute("DROP SCHEMA #{name} CASCADE")
+    command = "DROP SCHEMA #{name} CASCADE"
+    ActiveRecord::Base.connection.execute(command)
   rescue ActiveRecord::StatementInvalid => e
-    raise Storey::SchemaNotFound, %{The schema "#{name}" cannot be found.}
+    raise(Storey::SchemaNotFound,
+          %{The schema "#{name}" cannot be found. Error: #{e}})
   end
 
   def switch(name=nil, &block)
@@ -110,11 +131,12 @@ module Storey
       switch original_schema
       result
     else
-      reset and return if name.blank?
+      reset and return if name.blank? || name == 'public'
       path = self.schema_search_path_for(name)
 
       unless self.schema_exists?(name)
-        fail Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.}
+        fail(Storey::SchemaNotFound,
+             %{The schema "#{path}" cannot be found.})
       end
 
       ActiveRecord::Base.connection.schema_search_path = path
@@ -136,18 +158,15 @@ module Storey
     schema_names = schema_name.split(',')
     schemas_not_in_db = schema_names - schemas_in_db
     schemas_not_in_db.empty?
-    # existence = schema_names.map do |s|
-    #   schemas_in_db.include?(s)
-    # end
-    # return false if existence.include?(false)
-    # true
   end
 
   def schema_search_path_for(schema_name)
     schema_names = schema_name.split(',')
     path = [suffixify(schema_name)]
     self.persistent_schemas.each do |schema|
-      path << suffixify(schema) unless schema_names.include?(schema)
+      unless schema_names.include?(schema)
+        path << suffixify(schema)
+      end
     end
     path.uniq.join(',')
   end
@@ -159,11 +178,13 @@ module Storey
   end
 
   def database_config
-    Rails.configuration.database_configuration[Rails.env].with_indifferent_access
+    Rails.configuration.
+      database_configuration[Rails.env].
+      with_indifferent_access
   end
 
   def duplicate!(from_schema, to_schema, options={})
-    duplicator = Duplicator.new from_schema, to_schema, options
+    duplicator = Duplicator.new(from_schema, to_schema, options)
     duplicator.perform!
   end
 

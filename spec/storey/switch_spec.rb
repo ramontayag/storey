@@ -159,4 +159,16 @@ describe Storey, "#switch" do
     end
 
   end
+
+  context 'when switching to the default/public schema' do
+    it 'should reset' do
+      Storey.create 'another'
+      Storey.switch 'another'
+      Storey.switch('public') do
+        Storey.schema.should == Storey.default_search_path
+      end
+      Storey.switch 'public'
+      Storey.schema.should == Storey.default_search_path
+    end
+  end
 end

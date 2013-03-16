@@ -6,7 +6,7 @@ Heavily inspired by the Apartment gem, Storey simplifies the implementation of m
 
 # Configuration
 
-Typically set in an initializer: config/initializer/storey.rb
+Typically set in an initializer: `config/initializer/storey.rb`
 
     # Defines the tables that should stay available to all (ie in the public schema)
     # Note that there's currently no way to exclude tables that aren't linked to models

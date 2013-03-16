@@ -13,12 +13,14 @@ require 'pry'
 
 RSpec.configure do |config|
   config.before(:suite) do
+    Storey.reload_config!
+
     # Clean the public schema
     Storey.switch do
       tables = ActiveRecord::Base.connection.tables
       # Don't invoke DatabaseCleaner if there are no tables,
       # since that library chokes and tries to drop tables without names
-      if tables.size != 1 or tables[0] != 'schema_migrations'
+      if tables.size != 1 || tables[0] != 'schema_migrations'
         DatabaseCleaner.clean_with :truncation
       end
     end

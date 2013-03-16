@@ -9,6 +9,9 @@ require 'storey/hstore'
 require 'storey/dumper'
 require 'storey/ruby_dumper'
 require 'storey/sql_dumper'
+require 'storey/native_schema_matcher'
+require 'storey/suffixifier'
+require 'storey/unsuffixifier'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -87,7 +90,7 @@ module Storey
   end
 
   def create_plain_schema(schema_name)
-    name = self.suffixify schema_name
+    name = suffixify schema_name
     command = %{"CREATE SCHEMA #{name}"}
     switches = self.command_line_switches(command: command)
     `psql #{switches}`
@@ -143,8 +146,7 @@ module Storey
       path = self.schema_search_path_for(name)
 
       unless self.schema_exists?(name)
-        fail(Storey::SchemaNotFound,
-             %{The schema "#{path}" cannot be found.})
+        fail(Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.})
       end
 
       ActiveRecord::Base.connection.schema_search_path = path
@@ -159,7 +161,7 @@ module Storey
   end
 
   def schema_exists?(name)
-    schema_name = self.suffixify(name)
+    schema_name = suffixify(name)
 
     schemas_in_db = self.schemas(suffix: self.suffix.present?)
     schemas_in_db << %("$user")
@@ -196,34 +198,6 @@ module Storey
     duplicator.perform!
   end
 
-  def suffixify(schema_name)
-    if Storey.suffix &&
-      !schema_name.include?(Storey.suffix) &&
-      !matches_default_search_path?(schema_name)
-
-      "#{schema_name}#{Storey.suffix}"
-    else
-      schema_name
-    end
-  end
-
-  def unsuffixify(name)
-    search_path = name
-    if Storey.suffix
-      paths = []
-      name.split(',').each do |schema|
-        result = if schema =~ /(\w+)#{Storey.suffix}/
-                   $1
-                 else
-                   schema
-                 end
-        paths << result
-      end
-      search_path = paths.join(',')
-    end
-    search_path
-  end
-
   def matches_default_search_path?(schema_name)
     paths = self.default_search_path.split(',')
     paths.each do |path|
@@ -251,4 +225,19 @@ module Storey
       end
     end
   end
+
+  private
+
+  def matches_native_schemas?(schema_name)
+    NativeSchemaMatcher.matches?(schema_name)
+  end
+
+  def suffixify(schema_name)
+    Suffixifier.suffixify(schema_name)
+  end
+
+  def unsuffixify(schema_name)
+    Unsuffixifier.unsuffixify schema_name
+  end
+
 end

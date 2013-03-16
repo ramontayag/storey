@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Storey, '#schema_search_path_for' do
 
   context 'given a search path that is one of the persistent schemas' do
-    # Storey.create 'bola'
-    # Storey.create 'halla'
     Storey.persistent_schemas = %w(halla)
     Storey.schema_search_path_for('bola,halla').should == 'bola,halla'
     Storey.schema_search_path_for('halla').should == 'halla'

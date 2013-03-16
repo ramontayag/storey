@@ -2,18 +2,26 @@ class Storey::Duplicator
   attr_accessor :source_schema, :target_schema, :source_file, :target_file, :structure_only, :file_prefix, :dump_path, :source_dump_path, :target_dump_path
 
   def initialize(from_schema, to_schema, options={})
-    fail Storey::SchemaNotFound, "cannot duplicate from nil schema" unless from_schema
+    unless from_schema
+      fail Storey::SchemaNotFound, "cannot duplicate from nil schema"
+    end
 
     self.dump_path = File.join Rails.root, 'tmp', 'schema_dumps'
     self.source_dump_path = File.join self.dump_path, 'source'
     self.target_dump_path = File.join self.dump_path, 'target'
     self.structure_only = options[:structure_only] || false
 
-    self.source_schema = Storey.suffixify from_schema
-    self.target_schema = Storey.suffixify to_schema
+    self.source_schema = suffixify(from_schema)
+    self.target_schema = suffixify(to_schema)
     self.file_prefix = "#{Time.now.to_i}_#{rand(100000)}"
-    self.source_file   = File.join self.source_dump_path, "#{self.file_prefix}_#{self.source_schema}.sql"
-    self.target_file   = File.join self.target_dump_path, "#{self.file_prefix}_#{self.target_schema}.sql"
+    self.source_file = File.join(
+      self.source_dump_path,
+      "#{self.file_prefix}_#{self.source_schema}.sql"
+    )
+    self.target_file = File.join(
+      self.target_dump_path,
+      "#{self.file_prefix}_#{self.target_schema}.sql"
+    )
   end
 
   def perform!
@@ -28,7 +36,9 @@ class Storey::Duplicator
     ENV['PGPASSWORD'] = Storey.database_config[:password]
     prepare_schema_dump_directories
 
-    options[:host]     ||= Storey.database_config[:host] unless Storey.database_config[:host].blank?
+    unless Storey.database_config[:host].blank?
+      options[:host] ||= Storey.database_config[:host]
+    end
     options[:username] ||= Storey.database_config[:username]
     options[:file]     ||= self.source_file
     options[:schema]   ||= self.source_schema
@@ -37,11 +47,16 @@ class Storey::Duplicator
     switches << '--schema-only' if self.structure_only
     switches = switches.join(" ")
 
-    `pg_dump #{switches} #{Storey.database_config[:database]}`
+    success = system("pg_dump #{switches} #{Storey.database_config[:database]}")
+    unless success
+      raise Storey::StoreyError, "There seems to have been a problem dumping `#{self.source_schema}` to make a copy of it into `#{self.target_schema}`"
+    end
   end
 
   def prepare_schema_dump_directories
-    [self.source_dump_path, self.target_dump_path].each { |d| FileUtils.mkdir_p(d) }
+    [self.source_dump_path, self.target_dump_path].each do |d|
+      FileUtils.mkdir_p(d)
+    end
   end
 
   def load_schema(options={})

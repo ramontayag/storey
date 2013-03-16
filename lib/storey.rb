@@ -145,8 +145,7 @@ module Storey
       path = self.schema_search_path_for(name)
 
       unless self.schema_exists?(name)
-        fail(Storey::SchemaNotFound,
-             %{The schema "#{path}" cannot be found.})
+        fail(Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.})
       end
 
       ActiveRecord::Base.connection.schema_search_path = path

@@ -11,6 +11,7 @@ require 'storey/ruby_dumper'
 require 'storey/sql_dumper'
 require 'storey/native_schema_matcher'
 require 'storey/suffixifier'
+require 'storey/unsuffixifier'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -197,23 +198,6 @@ module Storey
     duplicator.perform!
   end
 
-  def unsuffixify(name)
-    search_path = name
-    if Storey.suffix
-      paths = []
-      name.split(',').each do |schema|
-        result = if schema =~ /(\w+)#{Storey.suffix}/
-                   $1
-                 else
-                   schema
-                 end
-        paths << result
-      end
-      search_path = paths.join(',')
-    end
-    search_path
-  end
-
   def matches_default_search_path?(schema_name)
     paths = self.default_search_path.split(',')
     paths.each do |path|
@@ -250,6 +234,10 @@ module Storey
 
   def suffixify(schema_name)
     Suffixifier.suffixify(schema_name)
+  end
+
+  def unsuffixify(schema_name)
+    Unsuffixifier.unsuffixify schema_name
   end
 
 end

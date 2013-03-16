@@ -9,6 +9,8 @@ require 'storey/hstore'
 require 'storey/dumper'
 require 'storey/ruby_dumper'
 require 'storey/sql_dumper'
+require 'storey/native_schema_matcher'
+require 'storey/suffixifier'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -87,7 +89,7 @@ module Storey
   end
 
   def create_plain_schema(schema_name)
-    name = self.suffixify schema_name
+    name = suffixify schema_name
     command = %{"CREATE SCHEMA #{name}"}
     switches = self.command_line_switches(command: command)
     `psql #{switches}`
@@ -159,7 +161,7 @@ module Storey
   end
 
   def schema_exists?(name)
-    schema_name = self.suffixify(name)
+    schema_name = suffixify(name)
 
     schemas_in_db = self.schemas(suffix: self.suffix.present?)
     schemas_in_db << %("$user")
@@ -194,17 +196,6 @@ module Storey
   def duplicate!(from_schema, to_schema, options={})
     duplicator = Duplicator.new(from_schema, to_schema, options)
     duplicator.perform!
-  end
-
-  def suffixify(schema_name)
-    if Storey.suffix &&
-      !schema_name.include?(Storey.suffix) &&
-      !matches_default_search_path?(schema_name)
-
-      "#{schema_name}#{Storey.suffix}"
-    else
-      schema_name
-    end
   end
 
   def unsuffixify(name)
@@ -251,4 +242,15 @@ module Storey
       end
     end
   end
+
+  private
+
+  def matches_native_schemas?(schema_name)
+    NativeSchemaMatcher.matches?(schema_name)
+  end
+
+  def suffixify(schema_name)
+    Suffixifier.suffixify(schema_name)
+  end
+
 end

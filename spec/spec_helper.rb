@@ -13,6 +13,8 @@ require 'pry'
 
 RSpec.configure do |config|
   config.before(:suite) do
+    Storey.reload_config!
+
     # Clean the public schema
     Storey.switch do
       tables = ActiveRecord::Base.connection.tables

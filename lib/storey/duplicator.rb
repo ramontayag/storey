@@ -96,4 +96,8 @@ class Storey::Duplicator
   def duplicating_from_default?
     ::Storey.matches_default_search_path?(self.source_schema) && self.structure_only
   end
+
+  def suffixify(schema_name)
+    Storey::Suffixifier.suffixify schema_name
+  end
 end

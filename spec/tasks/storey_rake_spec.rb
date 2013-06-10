@@ -23,6 +23,16 @@ describe Storey, "rake tasks" do
       ActiveRecord::Migrator.should_receive(:migrate).exactly(@number_of_dbs + 1).times
       @rake["storey:migrate"].invoke
     end
+
+    context 'when a version is given' do
+      it 'should migrate to the given version' do
+        ENV['VERSION'] = '3299329'
+        ActiveRecord::Migrator.should_receive(:migrate).
+          with(ActiveRecord::Migrator.migrations_path, '3299329').
+          exactly(@number_of_dbs + 1).times
+        @rake["storey:migrate"].invoke
+      end
+    end
   end
 
   describe "storey:migrate:up" do

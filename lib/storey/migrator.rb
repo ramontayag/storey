@@ -3,17 +3,18 @@ module Storey
 
     extend self
 
-    def migrate_all
-      self.migrate 'public'
+    def migrate_all(options={})
+      self.migrate 'public', options
       Dumper.dump
       Storey.schemas(public: false).each do |schema|
-        self.migrate schema
+        self.migrate schema, options
       end
     end
 
-    def migrate(schema)
+    def migrate(schema, options={})
       Storey.switch schema do
-        ActiveRecord::Migrator.migrate ActiveRecord::Migrator.migrations_path
+        ActiveRecord::Migrator.migrate(ActiveRecord::Migrator.migrations_path,
+                                       options[:version])
       end
     end
 

@@ -9,8 +9,8 @@ describe Storey::Migrator do
 
   describe '.migrate_all' do
     it 'should migrate the default search path first, then all available schemas' do
-      described_class.should_receive(:migrate).with('public').ordered
-      described_class.should_receive(:migrate).with(@schema_1).ordered
+      described_class.should_receive(:migrate).with('public', {}).ordered
+      described_class.should_receive(:migrate).with(@schema_1, {}).ordered
       described_class.migrate_all
     end
 

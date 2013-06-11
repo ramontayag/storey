@@ -36,7 +36,7 @@ module Storey
 
     def perform!
       dump_schema
-      replace_occurances
+      replace_occurrences
       load_schema
     end
 
@@ -110,7 +110,7 @@ module Storey
       end
     end
 
-    def replace_occurances
+    def replace_occurrences
       File.open(self.source_file, 'r') do |file|
         file.each_line do |line|
           new_line = line.gsub(/#{self.source_schema}/, self.target_schema)

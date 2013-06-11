@@ -1,5 +1,5 @@
 module Storey
-    class SqlDumper
+  class SqlDumper
 
     def self.dump(*args)
       self.new(*args).dump

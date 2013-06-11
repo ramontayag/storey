@@ -1,7 +1,7 @@
 require 'active_record/schema_dumper'
 
 module Storey
-    class RubyDumper
+  class RubyDumper
 
     def self.dump(*args)
       self.new(*args).dump

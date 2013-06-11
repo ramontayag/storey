@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Storey::Migrator do
   before do
-    @original_schema = ActiveRecord::Base.connection.schema_search_path
+    @original_schema = ::ActiveRecord::Base.connection.schema_search_path
     @schema_1 = "first_schema"
     Storey.create @schema_1
   end
@@ -23,8 +23,8 @@ describe Storey::Migrator do
   describe '.migrate' do
     context 'given a schema' do
       it 'should connect to new db, then reset when done' do
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
         Storey::Migrator.migrate(@schema_1)
       end
 
@@ -43,8 +43,8 @@ describe Storey::Migrator do
 
     context "up" do
       it "should connect to new db, then reset when done" do
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
         Storey::Migrator.run(:up, @schema_1, @migration_version_2)
       end
 
@@ -56,8 +56,8 @@ describe Storey::Migrator do
 
     describe "down" do
       it "should connect to new db, then reset when done" do
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
         Storey::Migrator.run(:down, @schema_1, @migration_version_2)
       end
 

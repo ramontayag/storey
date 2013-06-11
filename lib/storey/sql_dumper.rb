@@ -10,7 +10,7 @@ module Storey
     end
 
     def dump
-      abcs = ActiveRecord::Base.configurations
+      abcs = ::ActiveRecord::Base.configurations
       set_psql_env(abcs[Rails.env])
       search_path = abcs[Rails.env]['schema_search_path']
       unless search_path.blank?
@@ -18,7 +18,7 @@ module Storey
       end
       `pg_dump -i -s -x -O -f #{Shellwords.escape(@file)} #{search_path} #{Shellwords.escape(abcs[Rails.env]['database'])}`
       raise 'Error dumping database' if $?.exitstatus == 1
-      File.open(@file, "a") { |f| f << "SET search_path TO #{ActiveRecord::Base.connection.schema_search_path};\n\n" }
+      File.open(@file, "a") { |f| f << "SET search_path TO #{::ActiveRecord::Base.connection.schema_search_path};\n\n" }
     end
 
   end

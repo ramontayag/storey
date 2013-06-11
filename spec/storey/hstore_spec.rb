@@ -5,7 +5,7 @@ describe Storey::Hstore do
     it 'should install the extension into the hstore schema' do
       Storey.persistent_schemas = %w(hstore)
       described_class.install
-      expect { ActiveRecord::Base.connection.execute "DROP EXTENSION hstore" }.
+      expect { ::ActiveRecord::Base.connection.execute "DROP EXTENSION hstore" }.
         to_not raise_error(ActiveRecord::StatementInvalid)
     end
 

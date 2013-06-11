@@ -23,9 +23,9 @@ describe Storey, "#duplicate!" do
 
     it "should create a schema with the same data under a new name" do
       Storey.duplicate! 'ricky', 'bobby'
-      Storey.schemas.should include('bobby')
+      expect(Storey.schemas).to include('bobby')
       Storey.switch 'bobby' do
-        Post.count.should == 1
+        expect(Post.count).to eq(1)
         Post.find_by_name("Hi").should_not be_nil
       end
     end
@@ -36,9 +36,9 @@ describe Storey, "#duplicate!" do
       end
 
       it 'should create a duplicate schema but copy the structure only' do
-        Storey.schemas.should include('bobby')
+        expect(Storey.schemas).to include('bobby')
         Storey.switch 'bobby' do
-          Post.count.should == 0
+          expect(Post.count).to eq(0)
         end
       end
 

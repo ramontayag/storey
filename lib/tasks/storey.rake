@@ -9,7 +9,9 @@ namespace :storey do
 
   desc "Migrate all schemas including public"
   task migrate: :environment do
-    Storey::Migrator.migrate_all
+    options = {}
+    options[:version] = ENV['VERSION']
+    Storey::Migrator.migrate_all options
   end
 
   desc "Rolls the schema back to the previous version (specify steps w/ STEP=n) across all schemas."

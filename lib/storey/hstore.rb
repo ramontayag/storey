@@ -8,8 +8,8 @@ module Storey
     def install
       ensure_hstore_is_persistent
       Storey.create 'hstore', force: true
-      ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS hstore SCHEMA #{suffixify('hstore')}"
-    rescue ActiveRecord::StatementInvalid => e
+      ::ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS hstore SCHEMA #{suffixify('hstore')}"
+    rescue ::ActiveRecord::StatementInvalid => e
       if e.message =~ /could not open extension control file/
         fail StoreyError, "Oops! Looks like the Hstore extension is not installed. Please install it for your OS first."
       end

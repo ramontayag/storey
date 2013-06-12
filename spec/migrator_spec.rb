@@ -2,16 +2,22 @@ require 'spec_helper'
 
 describe Storey::Migrator do
   before do
-    @original_schema = ActiveRecord::Base.connection.schema_search_path
+    @original_schema = ::ActiveRecord::Base.connection.schema_search_path
     @schema_1 = "first_schema"
     Storey.create @schema_1
   end
 
   describe '.migrate_all' do
     it 'should migrate the default search path first, then all available schemas' do
-      described_class.should_receive(:migrate).with('public').ordered
-      described_class.should_receive(:migrate).with(@schema_1).ordered
+      described_class.should_receive(:migrate).with('public', {}).ordered
+      described_class.should_receive(:migrate).with(@schema_1, {}).ordered
       described_class.migrate_all
+    end
+
+    it 'should convert the version given to an integer' do
+      described_class.should_receive(:migrate).with('public', {version: 292})
+      described_class.should_receive(:migrate).with(@schema_1, {version: 292})
+      described_class.migrate_all version: '292'
     end
 
     it 'should dump the database' do
@@ -23,8 +29,10 @@ describe Storey::Migrator do
   describe '.migrate' do
     context 'given a schema' do
       it 'should connect to new db, then reset when done' do
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).
+          with(@schema_1).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).
+          with(@original_schema).once
         Storey::Migrator.migrate(@schema_1)
       end
 
@@ -43,26 +51,32 @@ describe Storey::Migrator do
 
     context "up" do
       it "should connect to new db, then reset when done" do
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).
+          with(@schema_1).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).
+          with(@original_schema).once
         Storey::Migrator.run(:up, @schema_1, @migration_version_2)
       end
 
       it "should migrate to a version" do
-        ActiveRecord::Migrator.should_receive(:run).with(:up, anything, @migration_version_1)
+        ActiveRecord::Migrator.should_receive(:run).
+          with(:up, anything, @migration_version_1)
         Storey::Migrator.run(:up, @schema_1, @migration_version_1)
       end
     end
 
     describe "down" do
       it "should connect to new db, then reset when done" do
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@schema_1).once
-        ActiveRecord::Base.connection.should_receive(:schema_search_path=).with(@original_schema).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).
+          with(@schema_1).once
+        ::ActiveRecord::Base.connection.should_receive(:schema_search_path=).
+          with(@original_schema).once
         Storey::Migrator.run(:down, @schema_1, @migration_version_2)
       end
 
       it "should migrate to a version" do
-        ActiveRecord::Migrator.should_receive(:run).with(:down, anything, @migration_version_1)
+        ActiveRecord::Migrator.should_receive(:run).
+          with(:down, anything, @migration_version_1)
         Storey::Migrator.run(:down, @schema_1, @migration_version_1)
       end
     end

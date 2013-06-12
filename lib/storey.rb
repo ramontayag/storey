@@ -1,6 +1,7 @@
 require "storey/version"
 require "rails/all"
 require "active_support/core_ext/module" # so we can use mattr_accessor
+require 'easy_class_to_instance_method'
 require 'storey/railtie' if defined?(Rails)
 require 'storey/exceptions'
 require 'storey/migrator'
@@ -12,6 +13,7 @@ require 'storey/sql_dumper'
 require 'storey/native_schema_matcher'
 require 'storey/suffixifier'
 require 'storey/unsuffixifier'
+require 'storey/resets_column_info'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -48,7 +50,7 @@ module Storey
   def schema(options={})
     options[:suffix] ||= false
 
-    name = ActiveRecord::Base.connection.schema_search_path
+    name = ::ActiveRecord::Base.connection.schema_search_path
 
     if options[:suffix]
       name
@@ -116,7 +118,7 @@ module Storey
     sql << " AND nspname != 'information_schema'"
     sql << " AND nspname != 'public'" unless options[:public]
 
-    names = ActiveRecord::Base.connection.query(sql).flatten
+    names = ::ActiveRecord::Base.connection.query(sql).flatten
 
     if options[:suffix]
       names
@@ -128,8 +130,8 @@ module Storey
   def drop(name)
     name = suffixify name
     command = "DROP SCHEMA #{name} CASCADE"
-    ActiveRecord::Base.connection.execute(command)
-  rescue ActiveRecord::StatementInvalid => e
+    ::ActiveRecord::Base.connection.execute(command)
+  rescue ::ActiveRecord::StatementInvalid => e
     raise(Storey::SchemaNotFound,
           %{The schema "#{name}" cannot be found. Error: #{e}})
   end
@@ -149,9 +151,9 @@ module Storey
         fail(Storey::SchemaNotFound, %{The schema "#{path}" cannot be found.})
       end
 
-      ActiveRecord::Base.connection.schema_search_path = path
+      ::ActiveRecord::Base.connection.schema_search_path = path
     end
-  rescue ActiveRecord::StatementInvalid => e
+  rescue ::ActiveRecord::StatementInvalid => e
     if e.to_s =~ /relation ".*" does not exist at character \d+/
       warn "See https://github.com/ramontayag/storey/issues/11"
       raise e
@@ -209,12 +211,12 @@ module Storey
   protected
 
   def schema_migrations
-    ActiveRecord::Migrator.get_all_versions
+    ::ActiveRecord::Migrator.get_all_versions
   end
 
   def reset
     path = self.schema_search_path_for(self.default_search_path)
-    ActiveRecord::Base.connection.schema_search_path = path
+    ::ActiveRecord::Base.connection.schema_search_path = path
   end
 
   def process_excluded_models
@@ -238,6 +240,12 @@ module Storey
 
   def unsuffixify(schema_name)
     Unsuffixifier.unsuffixify schema_name
+  end
+
+  def reset_column_information
+    ::ActiveRecord::Base.descendants.each do |descendant|
+      descendant.reset_column_information
+    end
   end
 
 end

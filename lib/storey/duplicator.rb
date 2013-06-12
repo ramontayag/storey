@@ -36,7 +36,7 @@ module Storey
 
     def perform!
       dump_schema
-      replace_occurances
+      replace_occurrences
       load_schema
     end
 
@@ -92,7 +92,7 @@ module Storey
         source_schema_migrations.each do |version|
           unless target_schema_migrations.include?(version)
             command = "INSERT INTO schema_migrations (version) VALUES ('#{version}');"
-            ActiveRecord::Base.connection.execute command
+            ::ActiveRecord::Base.connection.execute command
           end
         end
       end
@@ -100,17 +100,17 @@ module Storey
 
     def source_schema_migrations
       ::Storey.switch(self.source_schema) do
-        ActiveRecord::Migrator.get_all_versions
+        ::ActiveRecord::Migrator.get_all_versions
       end
     end
 
     def target_schema_migrations
       ::Storey.switch(self.target_schema) do
-        ActiveRecord::Migrator.get_all_versions
+        ::ActiveRecord::Migrator.get_all_versions
       end
     end
 
-    def replace_occurances
+    def replace_occurrences
       File.open(self.source_file, 'r') do |file|
         file.each_line do |line|
           new_line = line.gsub(/#{self.source_schema}/, self.target_schema)

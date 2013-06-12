@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe Storey, "#create" do
   it "should load the database structure into the new schema" do
-    public_tables = Storey.switch { ActiveRecord::Base.connection.tables }.sort
+    public_tables = Storey.switch { ::ActiveRecord::Base.connection.tables }.sort
     Storey.create "foobar" do
-      foobar_tables = ActiveRecord::Base.connection.tables.sort
+      foobar_tables = ::ActiveRecord::Base.connection.tables.sort
       foobar_tables.should == public_tables
     end
   end
 
   context 'when in a database transaction and loading the database structure' do
     it 'should not blow up and continue to create the schema' do
-      ActiveRecord::Base.transaction do
+      ::ActiveRecord::Base.transaction do
         Storey.create 'foobar'
       end
       Storey.schemas.should include('foobar')
@@ -29,7 +29,7 @@ describe Storey, "#create" do
   context "when load_database_schema: false" do
     it "should not load the structure" do
       Storey.create "foobar", load_database_structure: false do
-        tables = ActiveRecord::Base.connection.tables
+        tables = ::ActiveRecord::Base.connection.tables
         tables.should_not include('companies')
         tables.should_not include('posts')
       end

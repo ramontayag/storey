@@ -12,23 +12,21 @@ require 'rake'
 require 'pry'
 
 RSpec.configure do |config|
-  config.before(:suite) do
+  config.order = 'random'
+
+  config.before(:each) do
+    # We don't want configuration to leak into other tests
     Storey.reload_config!
 
     # Clean the public schema
     Storey.switch do
-      tables = ActiveRecord::Base.connection.tables
+      tables = ::ActiveRecord::Base.connection.tables
       # Don't invoke DatabaseCleaner if there are no tables,
       # since that library chokes and tries to drop tables without names
       if tables.size != 1 || tables[0] != 'schema_migrations'
         DatabaseCleaner.clean_with :truncation
       end
     end
-  end
-
-  config.before(:each) do
-    # We don't want configuration to leak into other tests
-    Storey.reload_config!
 
     # Always switch back to the default search path
     # Some tests that didn't switch back broke the following tests
@@ -45,16 +43,9 @@ RSpec.configure do |config|
     Rake.application = @rake
     Dummy::Application.load_tasks
 
-    # It seems when instantiating our own rake object, misc.rake
-    # isn't loaded. We get the following error if we don't load misc.rake:
-    # RuntimeError: Don't know how to build task 'rails_env'
-    load "rails/tasks/misc.rake"
-
-    # we don't want any test that has set this to keep it hanging around
-    # screwing with our migration
     ENV['STEP'] = ENV['VERSION'] = nil
     Rails.application.config.active_record.schema_format = :ruby
-    @rake["db:migrate"].invoke
+    Storey::Migrator.migrate_all
   end
 end
 

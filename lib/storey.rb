@@ -1,7 +1,7 @@
 require "storey/version"
 require "rails/all"
 require "active_support/core_ext/module" # so we can use mattr_accessor
-require 'storey/active_record/descendants'
+require 'easy_class_to_instance_method'
 require 'storey/railtie' if defined?(Rails)
 require 'storey/exceptions'
 require 'storey/migrator'
@@ -13,6 +13,7 @@ require 'storey/sql_dumper'
 require 'storey/native_schema_matcher'
 require 'storey/suffixifier'
 require 'storey/unsuffixifier'
+require 'storey/resets_column_info'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -151,7 +152,6 @@ module Storey
       end
 
       ::ActiveRecord::Base.connection.schema_search_path = path
-      reset_column_information
     end
   rescue ::ActiveRecord::StatementInvalid => e
     if e.to_s =~ /relation ".*" does not exist at character \d+/

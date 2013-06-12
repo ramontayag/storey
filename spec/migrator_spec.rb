@@ -14,6 +14,12 @@ describe Storey::Migrator do
       described_class.migrate_all
     end
 
+    it 'should convert the version given to an integer' do
+      described_class.should_receive(:migrate).with('public', {version: 292})
+      described_class.should_receive(:migrate).with(@schema_1, {version: 292})
+      described_class.migrate_all version: '292'
+    end
+
     it 'should dump the database' do
       Storey::Dumper.should_receive(:dump)
       described_class.migrate_all

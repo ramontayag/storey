@@ -4,6 +4,7 @@ module Storey
     extend self
 
     def migrate_all(options={})
+      options[:version] = options[:version].to_i if options[:version]
       self.migrate 'public', options
       Dumper.dump
       Storey.schemas(public: false).each do |schema|

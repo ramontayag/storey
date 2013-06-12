@@ -43,16 +43,9 @@ RSpec.configure do |config|
     Rake.application = @rake
     Dummy::Application.load_tasks
 
-    # It seems when instantiating our own rake object, misc.rake
-    # isn't loaded. We get the following error if we don't load misc.rake:
-    # RuntimeError: Don't know how to build task 'rails_env'
-    load "rails/tasks/misc.rake"
-
-    # we don't want any test that has set this to keep it hanging around
-    # screwing with our migration
     ENV['STEP'] = ENV['VERSION'] = nil
     Rails.application.config.active_record.schema_format = :ruby
-    @rake["db:migrate"].invoke
+    Storey::Migrator.migrate_all
   end
 end
 

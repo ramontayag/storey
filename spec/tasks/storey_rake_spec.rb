@@ -28,7 +28,7 @@ describe Storey, "rake tasks" do
       it 'should migrate to the given version' do
         ENV['VERSION'] = '3299329'
         ActiveRecord::Migrator.should_receive(:migrate).
-          with(ActiveRecord::Migrator.migrations_path, '3299329').
+          with(ActiveRecord::Migrator.migrations_path, 3299329).
           exactly(@number_of_dbs + 1).times
         @rake["storey:migrate"].invoke
       end

@@ -14,6 +14,7 @@ module Storey
 
     def migrate(schema, options={})
       Storey.switch schema do
+        puts "= Migrating #{schema}"
         ::ActiveRecord::Migrator.migrate(::ActiveRecord::Migrator.migrations_path,
                                          options[:version])
       end

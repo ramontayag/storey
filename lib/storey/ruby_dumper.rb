@@ -1,11 +1,7 @@
-require 'active_record/schema_dumper'
-
 module Storey
   class RubyDumper
 
-    def self.dump(*args)
-      self.new(*args).dump
-    end
+    easy_class_to_instance
 
     def initialize(options={})
       default_file_path = File.join(Rails.root, 'db', 'schema.rb')

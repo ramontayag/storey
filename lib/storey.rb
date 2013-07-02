@@ -1,15 +1,16 @@
+require 'easy_class_to_instance_method'
+require "active_support/core_ext/module" # so we can use mattr_accessor
+
 require "storey/version"
 require "rails/all"
-require "active_support/core_ext/module" # so we can use mattr_accessor
-require 'easy_class_to_instance_method'
 require 'storey/railtie' if defined?(Rails)
 require 'storey/exceptions'
 require 'storey/migrator'
 require 'storey/duplicator'
 require 'storey/hstore'
-require 'storey/dumper'
 require 'storey/ruby_dumper'
 require 'storey/sql_dumper'
+require 'storey/dumper'
 require 'storey/native_schema_matcher'
 require 'storey/suffixifier'
 require 'storey/unsuffixifier'

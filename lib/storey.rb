@@ -15,6 +15,7 @@ require 'storey/native_schema_matcher'
 require 'storey/suffixifier'
 require 'storey/unsuffixifier'
 require 'storey/resets_column_info'
+require 'storey/utils'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -95,19 +96,8 @@ module Storey
   def create_plain_schema(schema_name)
     name = suffixify schema_name
     command = %{"CREATE SCHEMA #{name}"}
-    switches = self.command_line_switches(command: command)
+    switches = db_command_line_switches_from(command: command)
     `psql #{switches}`
-  end
-
-  def command_line_switches(options={})
-    switches = {}
-    if self.database_config.has_key?(:host)
-      switches[:host] = self.database_config[:host]
-    end
-    switches[:dbname] = self.database_config[:database]
-    switches[:username] = self.database_config[:username]
-    switches = switches.merge(options)
-    switches.map {|k, v| "--#{k}=#{v}"}.join(' ')
   end
 
   def schemas(options={})
@@ -207,6 +197,10 @@ module Storey
       return true if path == schema_name
     end
     self.default_search_path == schema_name
+  end
+
+  def db_command_line_switches_from(extra_config={})
+    Utils.db_command_line_switches_from(self.database_config, extra_config)
   end
 
   protected

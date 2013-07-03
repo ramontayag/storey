@@ -12,7 +12,11 @@ module Storey
     end
 
     def self.command_line_switches_from(hash={})
-      hash.map { |k, v| "--#{k}=#{v}" }.join(' ')
+      hash.map do |k, v|
+        arg = "--#{k}"
+        arg << "=#{v}" if v
+        arg
+      end.join(' ')
     end
 
   end

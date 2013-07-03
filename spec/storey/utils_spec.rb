@@ -34,7 +34,10 @@ describe Storey::Utils do
     end
 
     let(:extra_config) do
-      { extra: 'config' }
+      {
+        extra: 'config',
+        'without-arg' => nil
+      }
     end
 
     it 'should set the database' do
@@ -47,6 +50,10 @@ describe Storey::Utils do
 
     it 'should include extra config' do
       expect(subject).to include('--extra=config')
+    end
+
+    it 'should set flag arguments' do
+      expect(subject).to match(/--without-arg$/)
     end
   end
 

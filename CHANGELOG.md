@@ -1,3 +1,7 @@
+# v0.5.0
+
+- Removed attr_accessors from Storey::Duplicator (they were never meant to be part of the public API anyway)
+
 # v0.4.2
 
 - `rake storey:migrate VERSION=xxxx` now works and uses the `VERSION` environment variable

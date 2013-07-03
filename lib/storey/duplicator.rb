@@ -32,7 +32,7 @@ module Storey
       ENV['PGPASSWORD'] = Storey.database_config[:password]
       prepare_schema_dump_directories
 
-      unless Storey.database_config[:host].blank?
+      if Storey.database_config[:host].present?
         options[:host] ||= Storey.database_config[:host]
       end
 

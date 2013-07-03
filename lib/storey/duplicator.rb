@@ -7,29 +7,29 @@ module Storey
                   :target_file,
                   :structure_only,
                   :file_prefix,
-                  :dump_path,
-                  :source_dump_path,
-                  :target_dump_path)
+                  :dump_dir,
+                  :source_dump_dir,
+                  :target_dump_dir)
 
     def initialize(from_schema, to_schema, options={})
       unless from_schema
         fail SchemaNotFound, "cannot duplicate from nil schema"
       end
 
-      self.dump_path = File.join Rails.root, 'tmp', 'schema_dumps'
-      self.source_dump_path = File.join self.dump_path, 'source'
-      self.target_dump_path = File.join self.dump_path, 'target'
+      self.dump_dir = File.join(Rails.root, 'tmp', 'schema_dumps')
+      self.source_dump_dir = File.join(self.dump_dir, 'source')
+      self.target_dump_dir = File.join(self.dump_dir, 'target')
       self.structure_only = options[:structure_only] || false
 
       self.source_schema = suffixify(from_schema)
       self.target_schema = suffixify(to_schema)
       self.file_prefix = "#{Time.now.to_i}_#{rand(100000)}"
       self.source_file = File.join(
-        self.source_dump_path,
+        self.source_dump_dir,
         "#{self.file_prefix}_#{self.source_schema}.sql"
       )
       self.target_file = File.join(
-        self.target_dump_path,
+        self.target_dump_dir,
         "#{self.file_prefix}_#{self.target_schema}.sql"
       )
     end
@@ -64,7 +64,7 @@ module Storey
     end
 
     def prepare_schema_dump_directories
-      [self.source_dump_path, self.target_dump_path].each do |d|
+      [self.source_dump_dir, self.target_dump_dir].each do |d|
         FileUtils.mkdir_p(d)
       end
     end

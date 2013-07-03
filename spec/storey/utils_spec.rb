@@ -29,7 +29,7 @@ describe Storey::Utils do
     let(:db_config) do
       {
         database: 'mydb',
-        username: 'uname',
+        username: 'uname'
       }
     end
 

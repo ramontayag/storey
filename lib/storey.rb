@@ -16,6 +16,7 @@ require 'storey/suffixifier'
 require 'storey/unsuffixifier'
 require 'storey/resets_column_info'
 require 'storey/utils'
+require 'storey/builds_dump_command'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)

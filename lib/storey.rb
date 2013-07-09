@@ -17,6 +17,7 @@ require 'storey/unsuffixifier'
 require 'storey/resets_column_info'
 require 'storey/utils'
 require 'storey/builds_dump_command'
+require 'storey/builds_load_command'
 
 module Storey
   RESERVED_SCHEMAS = %w(hstore)
@@ -96,9 +97,12 @@ module Storey
 
   def create_plain_schema(schema_name)
     name = suffixify schema_name
-    command = %{"CREATE SCHEMA #{name}"}
-    switches = db_command_line_switches_from(command: command)
-    `psql #{switches}`
+    command = "CREATE SCHEMA #{name}"
+
+    psql_command = BuildsLoadCommand.
+      execute(self.database_config.merge(command: command))
+
+    system psql_command
   end
 
   def schemas(options={})

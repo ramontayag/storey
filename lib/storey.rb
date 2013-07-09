@@ -98,11 +98,7 @@ module Storey
   def create_plain_schema(schema_name)
     name = suffixify schema_name
     command = "CREATE SCHEMA #{name}"
-
-    psql_command = BuildsLoadCommand.
-      execute(self.database_config.merge(command: command))
-
-    system psql_command
+    system psql_load_command(command: command)
   end
 
   def schemas(options={})
@@ -246,6 +242,10 @@ module Storey
     ::ActiveRecord::Base.descendants.each do |descendant|
       descendant.reset_column_information
     end
+  end
+
+  def psql_load_command(options={})
+    BuildsLoadCommand.execute(self.database_config.merge(options))
   end
 
 end

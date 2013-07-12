@@ -18,9 +18,9 @@ require 'storey/resets_column_info'
 require 'storey/utils'
 require 'storey/builds_dump_command'
 require 'storey/builds_load_command'
+require 'storey/validates_schema_name'
 
 module Storey
-  RESERVED_SCHEMAS = %w(hstore)
 
   mattr_accessor :suffix, :persistent_schemas
   mattr_writer :default_search_path
@@ -64,13 +64,7 @@ module Storey
   end
 
   def create(name, options={}, &block)
-    if name.blank?
-      fail ArgumentError, "Must pass in a valid schema name"
-    end
-
-    if RESERVED_SCHEMAS.include?(name) && !options[:force]
-      fail ArgumentError, "'#{name}' is a reserved schema name"
-    end
+    ValidatesSchemaName.execute!(name) unless options[:force]
 
     if self.schemas.include?(name)
       fail(Storey::SchemaExists,

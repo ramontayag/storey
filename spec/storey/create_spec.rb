@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe Storey, "#create" do
+
+  context 'given an invalid schema' do
+    it 'should fail' do
+      expect { Storey.create('a a') }.to raise_error
+    end
+  end
+
   it "should load the database structure into the new schema" do
     public_tables = Storey.switch { ::ActiveRecord::Base.connection.tables }.sort
     Storey.create "foobar" do
@@ -44,7 +51,7 @@ describe Storey, "#create" do
 
   context "when a blank string is passed" do
     it "should raise an argument error about an invalid schema name" do
-      expect {Storey.create ""}.to raise_error(ArgumentError, "Must pass in a valid schema name")
+      expect {Storey.create ""}.to raise_error
     end
   end
 
@@ -99,7 +106,7 @@ describe Storey, "#create" do
 
   context 'when creating a reserved schema' do
     it 'should fail' do
-      expect {Storey.create('hstore')}.to raise_error(ArgumentError, "'hstore' is a reserved schema name")
+      expect {Storey.create('hstore')}.to raise_error(ArgumentError, "`hstore` is a reserved schema name")
     end
 
     context 'when force: true is passed in' do

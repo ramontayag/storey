@@ -1,5 +1,5 @@
 module Storey
-  class ValidatesSchemaName
+  class SchemaName < String
     RESERVED_SCHEMAS = %w(hstore)
 
     easy_class_to_instance
@@ -10,21 +10,25 @@ module Storey
               else
                 name
               end
+      super @name
     end
 
     def valid?
       (@name =~ /^[^0-9][\w]*$/ || @name == '"$user"') &&
-        @name !~ /^pg_/ &&
-        !RESERVED_SCHEMAS.include?(@name)
+        @name !~ /^pg_/
     end
 
-    def execute!
+    def reserved?
+      RESERVED_SCHEMAS.include?(@name)
+    end
+
+    def validate!
       schema_name = self.class.new(@name)
       unless schema_name.valid?
-        if RESERVED_SCHEMAS.include?(@name)
-          raise ArgumentError, "`#{@name}` is a reserved schema name"
-        end
         raise ArgumentError, "`#{@name}` is not a valid schema name"
+      end
+      if schema_name.reserved?
+        raise ArgumentError, "`#{@name}` is a reserved schema name"
       end
     end
 

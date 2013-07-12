@@ -18,7 +18,7 @@ require 'storey/resets_column_info'
 require 'storey/utils'
 require 'storey/builds_dump_command'
 require 'storey/builds_load_command'
-require 'storey/validates_schema_name'
+require 'storey/schema_name'
 
 module Storey
 
@@ -64,11 +64,18 @@ module Storey
   end
 
   def create(name, options={}, &block)
-    ValidatesSchemaName.execute!(name) unless options[:force]
+    name = SchemaName.new(name)
+
+    unless name.valid?
+      fail SchemaInvalid, "`#{name} is not a valid schema name`"
+    end
+
+    if name.reserved? && !options[:force]
+      fail Storey::SchemaReserved, "`#{name}` is a reserved schema"
+    end
 
     if self.schemas.include?(name)
-      fail(Storey::SchemaExists,
-           %{The schema "#{name}" already exists.})
+      fail(Storey::SchemaExists, %{The schema "#{name}" already exists.})
     end
 
     if options[:load_database_structure].nil?

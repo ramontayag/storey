@@ -4,7 +4,26 @@ describe Storey, "#create" do
 
   context 'given an invalid schema' do
     it 'should fail' do
-      expect { Storey.create('a a') }.to raise_error
+      expect { Storey.create('a a') }.to raise_error(Storey::SchemaInvalid)
+    end
+  end
+
+  context 'given a reserved schema' do
+    context 'force is true' do
+      it 'should create the schema' do
+        reserved_schema = Storey::SchemaName::RESERVED_SCHEMAS.sample
+        expect { Storey.create(reserved_schema, force: true) }.
+          to_not raise_error
+        expect(Storey.schemas).to include(reserved_schema)
+      end
+    end
+
+    context 'force is not true' do
+      it 'should fail' do
+        reserved_schema = Storey::SchemaName::RESERVED_SCHEMAS.sample
+        expect { Storey.create(reserved_schema) }.
+          to raise_error(Storey::SchemaReserved)
+      end
     end
   end
 
@@ -100,21 +119,6 @@ describe Storey, "#create" do
         Storey.create "foo" do
           expect {Fake.create}.to raise_error(ActiveRecord::StatementInvalid)
         end
-      end
-    end
-  end
-
-  context 'when creating a reserved schema' do
-    it 'should fail' do
-      expect {Storey.create('hstore')}.to raise_error(ArgumentError, "`hstore` is a reserved schema name")
-    end
-
-    context 'when force: true is passed in' do
-      it 'should create the schema' do
-        expect {
-          Storey.create 'hstore', force: true
-        }.to_not raise_error(ArgumentError)
-        Storey.schemas.should include('hstore')
       end
     end
   end

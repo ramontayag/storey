@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/ramontayag/storey"
   s.summary     = %q{Manage multiple PostgreSQL schemas in your multi-tenant app.}
   s.description = %q{Storey aims to simplify the implementation of managing a multi-tenant application.}
+  s.license = 'MIT'
 
   s.rubyforge_project = "storey"
 

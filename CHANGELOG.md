@@ -1,6 +1,7 @@
 # v0.5.0
 
 - Removed attr_accessors from Storey::Duplicator (they were never meant to be part of the public API anyway)
+- Validate the schema name when creating schemas
 
 # v0.4.2
 

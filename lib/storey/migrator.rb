@@ -1,9 +1,7 @@
 module Storey
-  module Migrator
+  class Migrator
 
-    extend self
-
-    def migrate_all(options={})
+    def self.migrate_all(options={})
       options[:version] = options[:version].to_i if options[:version]
       self.migrate 'public', options
       Dumper.dump
@@ -12,7 +10,7 @@ module Storey
       end
     end
 
-    def migrate(schema, options={})
+    def self.migrate(schema, options={})
       Storey.switch schema do
         puts "= Migrating #{schema}"
         ::ActiveRecord::Migrator.migrate(::ActiveRecord::Migrator.migrations_path,
@@ -20,7 +18,7 @@ module Storey
       end
     end
 
-    def run(direction, schema, version)
+    def self.run(direction, schema, version)
       Storey.switch schema do
         ::ActiveRecord::Migrator.run(
           direction,
@@ -30,14 +28,14 @@ module Storey
       end
     end
 
-    def rollback_all(step=1)
+    def self.rollback_all(step=1)
       Storey.schemas.each do |schema_name|
         self.rollback(schema_name, step)
       end
       Dumper.dump
     end
 
-    def rollback(schema, step=1)
+    def self.rollback(schema, step=1)
       Storey.switch schema do
         puts "= Rolling back `#{schema}` #{step} steps"
         ::ActiveRecord::Migrator.rollback(

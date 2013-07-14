@@ -2,6 +2,7 @@
 
 - Removed attr_accessors from Storey::Duplicator (they were never meant to be part of the public API anyway)
 - Validate the schema name when creating schemas
+- Clean source and target files after duplicating [#18](https://github.com/ramontayag/storey/issues/18)
 
 # v0.4.2
 

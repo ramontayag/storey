@@ -18,6 +18,8 @@ RSpec.configure do |config|
     # We don't want configuration to leak into other tests
     Storey.reload_config!
 
+    FileUtils.rm_rf File.join(Rails.root, 'tmp', 'schema_dumps')
+
     # Clean the public schema
     Storey.switch do
       tables = ::ActiveRecord::Base.connection.tables

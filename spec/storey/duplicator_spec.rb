@@ -14,6 +14,18 @@ describe Storey::Duplicator do
         )
       end
     end
+
+    it 'should remove the target and source sql files after work' do
+      Storey.create 'boo'
+      duplicator = described_class.new('boo', 'ya')
+      duplicator.perform!
+      source_dump_dir =
+        File.join(Rails.root, 'tmp', 'schema_dumps', 'source', '*.*')
+      target_dump_dir =
+        File.join(Rails.root, 'tmp', 'schema_dumps', 'target', '*.*')
+      expect(Dir[source_dump_dir]).to be_empty
+      expect(Dir[target_dump_dir]).to be_empty
+    end
   end
 
 end

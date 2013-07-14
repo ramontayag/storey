@@ -24,9 +24,19 @@ module Storey
       dump_schema
       replace_occurrences
       load_schema
+      clean_source
+      clean_target
     end
 
     private
+
+    def clean_source
+      FileUtils.rm(@source_file)
+    end
+
+    def clean_target
+      FileUtils.rm(@target_file)
+    end
 
     def dump_schema(options={})
       ENV['PGPASSWORD'] = Storey.database_config[:password]

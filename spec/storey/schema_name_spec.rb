@@ -59,26 +59,32 @@ describe Storey::SchemaName do
     end
   end
 
-  describe '.validate!' do
+  describe '#validate_format!' do
+    subject { described_class.validate_format!(schema_name) }
+
     context 'an invalid name is given' do
+      let(:schema_name) { 'a a' }
       it 'should fail' do
-        expect { described_class.validate!('a a') }.
-          to raise_error(ArgumentError, '`a a` is not a valid schema name')
-      end
-    end
-
-    context 'when the name is a reserved schema name' do
-      let(:schema_name) { described_class::RESERVED_SCHEMAS.sample }
-
-      it 'should fail with reserved schema argument error' do
-        expect { described_class.validate!(schema_name) }.
-          to raise_error(ArgumentError, "`#{schema_name}` is a reserved schema name")
+        expect { subject }.
+          to raise_error(Storey::SchemaInvalid, '`a a` is not a valid schema name')
       end
     end
 
     context 'a valid name is given' do
+      let(:schema_name) { 'a_5' }
       it 'should initialize without exceptions' do
-        expect { described_class.validate!('a_5') }.to_not raise_error
+        expect { subject }.to_not raise_error
+      end
+    end
+  end
+
+  describe '#validate_reserved!' do
+    context 'when the name is a reserved schema name' do
+      let(:schema_name) { described_class::RESERVED_SCHEMAS.sample }
+
+      it 'should fail with reserved schema argument error' do
+        expect { described_class.validate_reserved!(schema_name) }.
+          to raise_error(Storey::SchemaReserved, "`#{schema_name}` is a reserved schema name")
       end
     end
   end

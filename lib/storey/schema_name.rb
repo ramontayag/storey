@@ -22,13 +22,15 @@ module Storey
       RESERVED_SCHEMAS.include?(@name)
     end
 
-    def validate!
-      schema_name = self.class.new(@name)
-      unless schema_name.valid?
-        raise ArgumentError, "`#{@name}` is not a valid schema name"
+    def validate_format!
+      unless self.valid?
+        raise SchemaInvalid, "`#{@name}` is not a valid schema name"
       end
-      if schema_name.reserved?
-        raise ArgumentError, "`#{@name}` is a reserved schema name"
+    end
+
+    def validate_reserved!
+      if self.reserved?
+        raise SchemaReserved, "`#{@name}` is a reserved schema name"
       end
     end
 

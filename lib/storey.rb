@@ -65,14 +65,8 @@ module Storey
 
   def create(name, options={}, &block)
     name = SchemaName.new(name)
-
-    unless name.valid?
-      fail SchemaInvalid, "`#{name} is not a valid schema name`"
-    end
-
-    if name.reserved? && !options[:force]
-      fail Storey::SchemaReserved, "`#{name}` is a reserved schema"
-    end
+    name.validate_format!
+    name.validate_reserved! unless options[:force]
 
     if self.schemas.include?(name)
       fail(Storey::SchemaExists, %{The schema "#{name}" already exists.})

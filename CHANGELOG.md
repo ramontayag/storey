@@ -1,3 +1,7 @@
+# v0.5.1
+
+- Relax Rails version dependency. Works with `4.0`.
+
 # v0.5.0
 
 - Removed attr_accessors from Storey::Duplicator (they were never meant to be part of the public API anyway)

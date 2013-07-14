@@ -1,11 +1,8 @@
 module Storey
-    class Dumper
+  class Dumper
 
+    easy_class_to_instance
     delegate :dump, to: :dumper
-
-    def self.dump(*args)
-      self.new(*args).dump
-    end
 
     def initialize(options={})
       @options = options
@@ -17,10 +14,9 @@ module Storey
 
     def dumper_class
       schema_format = Rails.configuration.active_record.schema_format || :ruby
-      klass = case schema_format
-              when :sql; SqlDumper
-              when :ruby; RubyDumper
-              end
+      class_name = "#{schema_format.to_s.classify}Dumper"
+      namespace = self.class.name.deconstantize.constantize
+      namespace.const_get class_name
     end
 
   end

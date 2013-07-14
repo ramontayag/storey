@@ -24,5 +24,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "database_cleaner"
   s.add_development_dependency "pry"
   s.add_runtime_dependency 'easy_class_to_instance_method', '~> 0.0.2'
-  s.add_runtime_dependency "rails", "~> 3.2.2"
+  s.add_runtime_dependency "rails", ">= 3.2.0"
 end

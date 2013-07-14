@@ -17,9 +17,10 @@ require 'storey/unsuffixifier'
 require 'storey/resets_column_info'
 require 'storey/utils'
 require 'storey/builds_dump_command'
+require 'storey/builds_load_command'
+require 'storey/schema_name'
 
 module Storey
-  RESERVED_SCHEMAS = %w(hstore)
 
   mattr_accessor :suffix, :persistent_schemas
   mattr_writer :default_search_path
@@ -63,17 +64,12 @@ module Storey
   end
 
   def create(name, options={}, &block)
-    if name.blank?
-      fail ArgumentError, "Must pass in a valid schema name"
-    end
-
-    if RESERVED_SCHEMAS.include?(name) && !options[:force]
-      fail ArgumentError, "'#{name}' is a reserved schema name"
-    end
+    name = SchemaName.new(name)
+    name.validate_format!
+    name.validate_reserved! unless options[:force]
 
     if self.schemas.include?(name)
-      fail(Storey::SchemaExists,
-           %{The schema "#{name}" already exists.})
+      fail(Storey::SchemaExists, %{The schema "#{name}" already exists.})
     end
 
     if options[:load_database_structure].nil?
@@ -96,9 +92,8 @@ module Storey
 
   def create_plain_schema(schema_name)
     name = suffixify schema_name
-    command = %{"CREATE SCHEMA #{name}"}
-    switches = db_command_line_switches_from(command: command)
-    `psql #{switches}`
+    command = "CREATE SCHEMA #{name}"
+    system psql_load_command(command: command)
   end
 
   def schemas(options={})
@@ -242,6 +237,10 @@ module Storey
     ::ActiveRecord::Base.descendants.each do |descendant|
       descendant.reset_column_information
     end
+  end
+
+  def psql_load_command(options={})
+    BuildsLoadCommand.execute(self.database_config.merge(options))
   end
 
 end

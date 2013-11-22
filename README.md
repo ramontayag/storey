@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ramontayag/storey.png?branch=master)](https://travis-ci.org/ramontayag/storey)
+
 # Storey
 
 Storey is used to manage multiple schemas in your multi-tenant Rails application.

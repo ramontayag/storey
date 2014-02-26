@@ -1,3 +1,7 @@
+# v0.6.0
+
+- Relax pg version dependency. Works with `~> 0.12`
+
 # v0.5.1
 
 - Relax Rails version dependency. Works with `4.0`.

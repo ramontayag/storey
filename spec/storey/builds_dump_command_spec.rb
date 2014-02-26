@@ -17,21 +17,21 @@ describe Storey::BuildsDumpCommand do
     end
 
     context 'when structure_only: true' do
-      let(:options) do
-        {
+      before do
+        options.merge!(
           database: 'mydb',
           structure_only: true
-        }
+        )
       end
       it { should include('--schema-only') }
     end
 
     context 'when structure_only: false' do
-      let(:options) do
-        {
+      before do
+        options.merge!(
           database: 'mydb',
           structure_only: false
-        }
+        )
       end
       it { should_not include('--schema-only') }
     end
@@ -50,21 +50,21 @@ describe Storey::BuildsDumpCommand do
     end
 
     context "schemas: 'public'" do
-      let(:options) do
-        {
+      before do
+        options.merge!(
           database: 'mydb',
           schemas: %q(public)
-        }
+        )
       end
       it { should include('--schema=public') }
     end
 
     context "schemas: '$user','public'" do
-      let(:options) do
-        {
+      before do
+        options.merge!(
           database: 'mydb',
           schemas: %q($user,public)
-        }
+        )
       end
       it { should include('--schema=\$user --schema=public') }
     end

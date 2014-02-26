@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   s.add_development_dependency "rspec-rails"
-  s.add_development_dependency "pg", "~> 0.12.2"
+  s.add_development_dependency "pg", "~> 0.12"
   s.add_development_dependency "database_cleaner"
   s.add_development_dependency "pry"
   s.add_runtime_dependency 'easy_class_to_instance_method', '~> 0.0.2'

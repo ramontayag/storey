@@ -71,7 +71,7 @@ describe Storey, "rake tasks" do
       end
 
       it "requires a version to migrate to" do
-        expect { @rake['storey:migrate:down'].invoke }.should raise_error("VERSION is required")
+        expect { @rake['storey:migrate:down'].invoke }.should raise_error(RuntimeError, /VERSION is required/)
       end
     end
 

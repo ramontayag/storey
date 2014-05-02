@@ -39,7 +39,7 @@ module Storey
     end
 
     def dump_schema(options={})
-      ENV['PGPASSWORD'] = Storey.database_config[:password]
+      SetsEnvPassword.with(Storey.database_config[:password])
       prepare_schema_dump_directories
 
       if Storey.database_config[:host].present?

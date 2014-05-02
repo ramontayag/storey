@@ -19,6 +19,7 @@ require 'storey/utils'
 require 'storey/builds_dump_command'
 require 'storey/builds_load_command'
 require 'storey/schema_name'
+require 'storey/sets_env_password'
 
 module Storey
 

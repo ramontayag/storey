@@ -54,6 +54,8 @@ describe Storey, "#duplicate!" do
 
   it "should clear the PGPASSWORD environment variable" do
     Storey.create 'ricky'
+    expect(Storey::SetsEnvPassword).to receive(:with).
+      with(Storey.database_config[:password])
     Storey.duplicate! 'ricky', 'bobby'
     ENV['PGPASSWORD'].should be_blank
   end

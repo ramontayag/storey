@@ -102,7 +102,3 @@ Usage:
 ## storey:hstore:install
 
 Run `rake storey:hstore:install` to install hstore extension into the hstore schema. Ensure that 'hstore' is one of the persistent schemas.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ramontayag/storey/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

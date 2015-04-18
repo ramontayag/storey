@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Storey, '#default_schema?' do
   context 'when not in the default schema' do
-    it 'should return false' do
+    it 'return false' do
       Storey.create 'hah' do
-        Storey.default_schema?.should be_false
+        expect(Storey.default_schema?).to be false
       end
     end
   end
@@ -12,7 +12,7 @@ describe Storey, '#default_schema?' do
   context 'when in the default schema' do
     it 'should return true' do
       Storey.switch do
-        Storey.default_schema?.should be_true
+        expect(Storey.default_schema?).to be true
       end
     end
   end

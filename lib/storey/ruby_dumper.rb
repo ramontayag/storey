@@ -10,7 +10,7 @@ module Storey
 
     def dump
       File.open(@file, "w:utf-8") do |file|
-        ::ActiveRecord::Base.establish_connection(Rails.env)
+        ::ActiveRecord::Base.establish_connection(Rails.env.to_sym)
         ::ActiveRecord::SchemaDumper.dump(::ActiveRecord::Base.connection, file)
       end
     end

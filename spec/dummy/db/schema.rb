@@ -16,13 +16,13 @@ ActiveRecord::Schema.define(version: 20120115060728) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "companies", force: true do |t|
-    t.string "name"
-    t.string "schema_name"
+  create_table "companies", force: :cascade do |t|
+    t.string "name",        limit: 255
+    t.string "schema_name", limit: 255
   end
 
-  create_table "posts", force: true do |t|
-    t.string "name"
+  create_table "posts", force: :cascade do |t|
+    t.string "name", limit: 255
     t.text   "body"
   end
 

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Storey, '#schema_exists?' do
   context 'the schema is the default search path' do
     it 'should return true' do
-      Storey.schema_exists?('"$user",public').should be_true
+      expect(Storey.schema_exists?('"$user",public')).to be true
     end
   end
 
@@ -14,13 +14,13 @@ describe Storey, '#schema_exists?' do
       end
 
       it 'should return true' do
-        Storey.schema_exists?('hoo').should be_true
+        expect(Storey.schema_exists?('hoo')).to be true
       end
     end
 
     context 'when the schema does not exist' do
       it 'should return false' do
-        Storey.schema_exists?('boo').should be_false
+        expect(Storey.schema_exists?('boo')).to be false
       end
     end
   end
@@ -33,13 +33,13 @@ describe Storey, '#schema_exists?' do
       end
 
       it 'should return true' do
-        Storey.schema_exists?('croo').should be_true
+        expect(Storey.schema_exists?('croo')).to be true
       end
     end
 
     context 'when the schema does not exist' do
       it 'should return false' do
-        Storey.schema_exists?('croo').should be_false
+        expect(Storey.schema_exists?('croo')).to be false
       end
     end
   end

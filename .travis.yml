@@ -7,5 +7,5 @@ before_script:
   - cp spec/dummy/config/database.yml{.sample,}
   - psql -c 'create database storey_test;' -U postgres
 gemfile:
-  - Gemfile
-  - gemfiles/rails3
+  - gemfiles/rails_3.gemfile
+  - gemfiles/rails_4.gemfile

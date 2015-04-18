@@ -6,28 +6,28 @@ describe Storey::NativeSchemaMatcher do
     context 'when the schema is "$user"' do
       it 'should be true' do
         m = described_class.new('"$user"')
-        m.matches?.should be_true
+        expect(m.matches?).to be true
       end
     end
 
     context 'when the schema is public' do
       it 'should be true' do
         m = described_class.new('public')
-        m.matches?.should be_true
+        expect(m.matches?).to be true
       end
     end
 
     context 'when given comma separated string of schemas all matching' do
       it 'should be true' do
         m = described_class.new('"$user",public')
-        m.matches?.should be_true
+        expect(m.matches?).to be true
       end
     end
 
     context 'when the schema is neither "$user" or public' do
       it 'should be false' do
         m = described_class.new('something')
-        m.matches?.should be_false
+        expect(m.matches?).to be false
       end
     end
   end

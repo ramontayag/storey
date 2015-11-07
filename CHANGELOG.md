@@ -1,3 +1,7 @@
+# v1.0.0
+
+- It's already being used in production. About time for a 1.0.0 release.
+
 # v0.6.0
 
 - Relax pg version dependency. Works with `~> 0.12`

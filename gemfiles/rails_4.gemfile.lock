@@ -1,12 +1,12 @@
 PATH
   remote: ../
   specs:
-    storey (0.6.0)
+    storey (1.0.0)
       easy_class_to_instance_method (~> 0.0.2)
       rails (>= 3.2.0)
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     actionmailer (4.2.1)
       actionpack (= 4.2.1)
@@ -142,3 +142,6 @@ DEPENDENCIES
   rails (= 4.2.1)
   rspec-rails
   storey!
+
+BUNDLED WITH
+   1.10.6

@@ -1,3 +1,8 @@
+# Unreleased
+
+- Add ability to get the current schema as an array of strings (`array: true`)
+- Fix specs where PG may or may not return the schemas as with leading spaces (`public, foo,bar`)
+
 # v1.0.0
 
 - It's already being used in production. About time for a 1.0.0 release.

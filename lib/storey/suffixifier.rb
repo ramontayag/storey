@@ -16,13 +16,13 @@ module Storey
         else
           "#{schema_name}#{suffix}"
         end
-      end.join(',')
+      end.join(', ')
     end
 
     private
 
     def schema_names
-      @schema_names ||= @schema_name.split(',')
+      @schema_names ||= @schema_name.split(',').map(&:strip)
     end
 
     def suffix

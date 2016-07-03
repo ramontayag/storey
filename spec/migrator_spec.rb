@@ -2,7 +2,9 @@ require 'spec_helper'
 
 describe Storey::Migrator do
   before do
-    @original_schema = ::ActiveRecord::Base.connection.schema_search_path
+    # split and join to make the expectation later consistent with the code
+    @original_schema = ::ActiveRecord::Base.connection.schema_search_path.
+      split(",").map(&:strip).join(", ")
     @schema_1 = "first_schema"
     Storey.create @schema_1
   end

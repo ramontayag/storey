@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-
+- Rails 5 support
 - Add ability to get the current schema as an array of strings (`array: true`)
 - Fix specs where PG may or may not return the schemas as with leading spaces (`public, foo,bar`)
 

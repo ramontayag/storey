@@ -1,12 +1,15 @@
+sudo: required
 language: ruby
-rvm:
-  - 1.9.3
-  - 2.1.1
 services:
-  - postgresql
+  postgresql
+addons:
+  postgresql: 9.4
 before_script:
   - cp spec/dummy/config/database.yml{.sample,}
-  - psql -c 'create database storey_test;' -U postgres
+  - psql -U postgres -c 'CREATE DATABASE storey_test;'
 gemfile:
   - gemfiles/rails_3.gemfile
   - gemfiles/rails_4.gemfile
+  - gemfiles/rails_5.gemfile
+rvm:
+  - 2.3.0

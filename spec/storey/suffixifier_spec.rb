@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Storey::Suffixifier do
 
   describe '#suffixify' do
-    subject do
+    subject(:schemas) do
       described_class.new(schema_name).suffixify
     end
 
@@ -20,11 +20,11 @@ describe Storey::Suffixifier do
         it { should == 'boom_suff' }
       end
 
-      context 'when given comma separated schemas' do
-        let(:schema_name) { '"$user",public,foo,bar,baz' }
+      context 'when given comma separated schemas (with inconsistent spaces)' do
+        let(:schema_name) { '"$user", public,foo, bar, baz' }
 
         it 'should return a comma separted schema string with the non-native schemas suffixified' do
-          subject.should == '"$user",public,foo_suff,bar_suff,baz_suff'
+          subject.should == '"$user", public, foo_suff, bar_suff, baz_suff'
         end
       end
     end

@@ -5,6 +5,12 @@ describe Storey, "#schema" do
     Storey.schema.should == %{"$user",public}
   end
 
+  context "array: true" do
+    it "returns it as an array of strings" do
+      expect(Storey.schema(array: true)).to eq %w("$user" public)
+    end
+  end
+
   context "when a suffix is set" do
     before do
       Storey.suffix = "_rock"

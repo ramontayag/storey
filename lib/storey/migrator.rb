@@ -13,8 +13,10 @@ module Storey
     def self.migrate(schema, options={})
       Storey.switch schema do
         puts "= Migrating #{schema}"
-        ::ActiveRecord::Migrator.migrate(::ActiveRecord::Migrator.migrations_path,
-                                         options[:version])
+        ::ActiveRecord::Migrator.migrate(
+          ::ActiveRecord::Migrator.migrations_paths,
+          options[:version],
+        )
       end
     end
 
@@ -22,7 +24,7 @@ module Storey
       Storey.switch schema do
         ::ActiveRecord::Migrator.run(
           direction,
-          ::ActiveRecord::Migrator.migrations_path,
+          ::ActiveRecord::Migrator.migrations_paths,
           version
         )
       end
@@ -39,7 +41,7 @@ module Storey
       Storey.switch schema do
         puts "= Rolling back `#{schema}` #{step} steps"
         ::ActiveRecord::Migrator.rollback(
-          ::ActiveRecord::Migrator.migrations_path,
+          ::ActiveRecord::Migrator.migrations_paths,
           step
         )
       end

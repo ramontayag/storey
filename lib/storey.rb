@@ -56,12 +56,9 @@ module Storey
     options[:suffix] ||= false
 
     name = ::ActiveRecord::Base.connection.schema_search_path
-
-    if options[:suffix]
-      name
-    else
-      unsuffixify name
-    end
+    name = unsuffixify(name) if !options[:suffix]
+    return name.split(",").map(&:strip) if options[:array]
+    name
   end
 
   def create(name, options={}, &block)
@@ -155,7 +152,7 @@ module Storey
 
     schemas_in_db = self.schemas(suffix: self.suffix.present?)
     schemas_in_db << %("$user")
-    schema_names = schema_name.split(',')
+    schema_names = schema_name.split(',').map(&:strip)
     schemas_not_in_db = schema_names - schemas_in_db
     schemas_not_in_db.empty?
   end

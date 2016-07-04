@@ -24,6 +24,19 @@ Typically set in an initializer: `config/initializer/storey.rb`
 
 # Methods
 
+## schema
+
+Return the current schema.
+
+Accepts options
+
+    array: true # return the schemas as an array
+
+Usage:
+
+    Storey.schema # "\"$user\", public"
+    Storey.schema(array: true) ["\"$user\"", "public"]
+
 ## schemas
 
 Returns all schemas except postgres' schemas.

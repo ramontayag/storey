@@ -136,10 +136,12 @@ describe Storey, "#switch" do
 
       it 'should switch to the schema with the persitent schemas still in the search path' do
         Storey.switch 'foobar'
-        Storey.schema.should == %{foobar,handle,bar,foo}
+        expect(Storey.schema(array: true)).
+          to match_array %w(foobar handle bar foo)
 
         Storey.switch
-        Storey.schema.should == %{"$user",public,handle,bar,foo}
+        expect(Storey.schema(array: true)).
+          to match_array %w("$user" public handle bar foo)
       end
     end
 

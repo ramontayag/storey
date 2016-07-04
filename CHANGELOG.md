@@ -27,7 +27,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Clean source and target files after duplicating [#18](https://github.com/ramontayag/storey/issues/18)
 
 ## [0.4.2]
-
 ### Added
 - `rake storey:migrate VERSION=xxxx` now works and uses the `VERSION` environment variable
 - `reset_column_information` of all models to avoid strange PostgreSQL errors (see https://github.com/ramontayag/storey/issues/11)

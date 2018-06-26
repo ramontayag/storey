@@ -36,15 +36,23 @@ describe Storey, "#schemas" do
       end
     end
 
-    context "when :public => true" do
-      it "should return an array of the schemas without the public schema" do
-        Storey.schemas(:public => true).should include("public")
+    context "`:public` option" do
+      context "when `public: true`" do
+        it "returns an array of the schemas including the public schema" do
+          expect(Storey.schemas(public: true)).to include("public")
+        end
       end
-    end
 
-    context "when :public => false" do
-      it "should return an array of the schemas with the public schema" do
-        Storey.schemas(:public => false).should_not include("public")
+      context "when `public: false`" do
+        it "returns an array of the schemas without the public schema" do
+          expect(Storey.schemas(public: false)).to_not include("public")
+        end
+      end
+
+      context "when `public` is not set" do
+        it "returns an array of the schemas including the public schema" do
+          expect(Storey.schemas).to include("public")
+        end
       end
     end
 

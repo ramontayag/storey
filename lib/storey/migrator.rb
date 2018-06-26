@@ -13,20 +13,13 @@ module Storey
     def self.migrate(schema, options={})
       Storey.switch schema do
         puts "= Migrating #{schema}"
-        ::ActiveRecord::Migrator.migrate(
-          ::ActiveRecord::Migrator.migrations_paths,
-          options[:version],
-        )
+        active_record_migrate(options[:version])
       end
     end
 
     def self.run(direction, schema, version)
       Storey.switch schema do
-        ::ActiveRecord::Migrator.run(
-          direction,
-          ::ActiveRecord::Migrator.migrations_paths,
-          version
-        )
+        active_record_run(direction, version)
       end
     end
 
@@ -44,6 +37,32 @@ module Storey
           ::ActiveRecord::Migrator.migrations_paths,
           step
         )
+      end
+    end
+
+    private
+
+    def self.active_record_migrate(version)
+      if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("5.2")
+        ::ActiveRecord::Migrator.migrate(
+          ::ActiveRecord::Migrator.migrations_paths,
+          version,
+        )
+      else
+        ::ActiveRecord::Tasks::DatabaseTasks.migrate
+      end
+    end
+
+    def self.active_record_run(direction, target_version)
+      if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("5.2")
+        ::ActiveRecord::Migrator.run(
+          direction,
+          ::ActiveRecord::Migrator.migrations_paths,
+          target_version
+        )
+      else
+        ::ActiveRecord::Base.connection.migration_context.
+          run(direction, target_version)
       end
     end
 

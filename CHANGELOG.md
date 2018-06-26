@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [2.0.0]
 ### Added
 - Rails 5 support
 - Add ability to get the current schema as an array of strings (`array: true`)

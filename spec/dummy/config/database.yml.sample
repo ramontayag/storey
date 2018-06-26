@@ -1,6 +1,7 @@
 test:
-  database: storey_test
+  database: postgres
   adapter: postgresql
   min_messages: WARNING
   username: postgres
   password:
+  host: localhost

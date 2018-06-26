@@ -97,15 +97,11 @@ module Storey
     end
 
     def source_schema_migrations
-      ::Storey.switch(@source_schema) do
-        ::ActiveRecord::Migrator.get_all_versions
-      end
+      GetMigrationVersions.(@source_schema)
     end
 
     def target_schema_migrations
-      ::Storey.switch(@target_schema) do
-        ::ActiveRecord::Migrator.get_all_versions
-      end
+      GetMigrationVersions.(@target_schema)
     end
 
     def replace_occurrences

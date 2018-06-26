@@ -6,8 +6,8 @@ describe Storey, "rake tasks" do
     @migration_version_1 = 20120115060713
     @migration_version_2 = 20120115060728
 
-    @number_of_dbs = rand(3) + 1
-    @number_of_dbs.times do |db|
+    @number_of_schemas = rand(3) + 1
+    @number_of_schemas.times do |db|
       Storey.create "schema_#{db}"
     end
   end
@@ -15,21 +15,21 @@ describe Storey, "rake tasks" do
   describe "storey:migrate" do
     before do
       # We don't care how it's migrated
-      ActiveRecord::Migrator.stub(:migrate)
+      Storey::Migrator.migrate_all
     end
 
     it "should migrate all schemas including public" do
       # +1 to take into account the public schema
-      ActiveRecord::Migrator.should_receive(:migrate).exactly(@number_of_dbs + 1).times
+      Storey::Migrator.should_receive(:migrate).exactly(@number_of_schemas + 1).times
       @rake["storey:migrate"].invoke
     end
 
     context 'when a version is given' do
-      it 'should migrate to the given version' do
+      it 'migrates to the given version for each schema' do
         ENV['VERSION'] = '3299329'
-        ActiveRecord::Migrator.should_receive(:migrate).
-          with(ActiveRecord::Migrator.migrations_paths, 3299329).
-          exactly(@number_of_dbs + 1).times
+        expect(Storey::Migrator).to receive(:migrate_all).
+          with(version: "3299329").
+          once
         @rake["storey:migrate"].invoke
       end
     end
@@ -57,7 +57,7 @@ describe Storey, "rake tasks" do
           :up,
           anything,
           @migration_version_2.to_i
-        ).exactly(@number_of_dbs+1).times
+        ).exactly(@number_of_schemas+1).times
 
         @rake['storey:migrate:up'].invoke
       end
@@ -86,7 +86,7 @@ describe Storey, "rake tasks" do
           :down,
           anything,
           @migration_version_1
-        ).exactly(@number_of_dbs+1).times
+        ).exactly(@number_of_schemas+1).times
 
         @rake['storey:migrate:down'].invoke
       end
@@ -94,12 +94,12 @@ describe Storey, "rake tasks" do
   end
 
   describe "storey:rollback" do
-    it "should rollback dbs" do
+    it "should rollback schemas" do
       Storey::Migrator.should_receive(:rollback_all).once
       @rake['storey:rollback'].invoke
     end
 
-    it "should rollback dbs STEP amt" do
+    it "should rollback schemas STEP amt" do
       step = 2
       Storey::Migrator.should_receive(:rollback_all).with(step).once
       ENV['STEP'] = step.to_s

@@ -8,6 +8,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Add ability to get the current schema as an array of strings (`array: true`)
 - Fix specs where PG may or may not return the schemas as with leading spaces (`public, foo,bar`)
 
+### Changed
+- Removed support for Rails 3, 4 and Ruby 2.3. They are no longer tested.
+- Test against Ruby 2.5.0
+
+### Fixed
+- Fixed dumping of sql files when pg host is remote
+
 ## [1.0.0]
 ### Added
 - It's already being used in production. About time for a 1.0.0 release.

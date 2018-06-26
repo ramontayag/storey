@@ -1,5 +1,6 @@
 require 'easy_class_to_instance_method'
 require "active_support/core_ext/module" # so we can use mattr_accessor
+require "open3"
 
 require "storey/version"
 require "rails/all"
@@ -20,6 +21,7 @@ require 'storey/builds_dump_command'
 require 'storey/builds_load_command'
 require 'storey/schema_name'
 require 'storey/sets_env_password'
+require 'storey/get_migration_versions'
 
 module Storey
 

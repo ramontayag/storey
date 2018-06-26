@@ -8,8 +8,8 @@ module Storey
     end
 
     def dump
-      `#{command}`
-      raise 'Error dumping database' if $?.exitstatus == 1
+      stdout_str, stderr_str, status = Open3.capture3(command)
+      raise "Error dumping database: #{stderr_str}" if status.exitstatus != 0
     end
 
     private
@@ -29,6 +29,9 @@ module Storey
     def command
       @command ||= BuildsDumpCommand.execute(structure_only: true,
                                              file: @file,
+                                             host: Storey.database_config[:host],
+                                             username: Storey.database_config[:username],
+                                             password: Storey.database_config[:password],
                                              schemas: search_path,
                                              database: database_name)
     end

@@ -16,6 +16,32 @@ describe Storey::BuildsDumpCommand do
       }
     end
 
+    context "when host is specified" do
+      before do
+        options.merge!(host: "localhost")
+      end
+
+      it { is_expected.to include("--host=localhost") }
+    end
+
+    context "when username is specified" do
+      before do
+        options.merge!(username: "username")
+      end
+
+      it { is_expected.to include("--username=username") }
+    end
+
+    context "when password is specified" do
+      before do
+        options.merge!(password: "pass")
+      end
+
+      it "sets the PGPASSWORD env variable" do
+        expect(subject).to match(/^PGPASSWORD=pass/)
+      end
+    end
+
     context 'when structure_only: true' do
       before do
         options.merge!(

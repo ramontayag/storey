@@ -1,11 +1,12 @@
-appraise "rails-3" do
-  gem "rails", "3.2.14"
+appraise "rails-5.0" do
+  gem "pg", "~> 0.21" # Rails 5.0 does not work with pg 1.x
+  gem "rails", "~> 5.0.0"
 end
 
-appraise "rails-4" do
-  gem "rails", "4.2.1"
+appraise "rails-5.1" do
+  gem "rails", "~> 5.1.0"
 end
 
-appraise "rails-5" do
-  gem "rails", "5.0.0"
+appraise "rails-5.2" do
+  gem "rails", "~> 5.2.0"
 end

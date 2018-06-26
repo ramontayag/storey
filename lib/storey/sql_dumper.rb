@@ -27,13 +27,14 @@ module Storey
     end
 
     def command
-      @command ||= BuildsDumpCommand.execute(structure_only: true,
-                                             file: @file,
-                                             host: Storey.database_config[:host],
-                                             username: Storey.database_config[:username],
-                                             password: Storey.database_config[:password],
-                                             schemas: search_path,
-                                             database: database_name)
+      return @command if defined?(@command)
+      args = Storey.database_config.slice(:host, :username, :password).merge(
+        structure_only: true,
+        file: @file,
+        schemas: search_path,
+        database: database_name,
+      )
+      @command = BuildsDumpCommand.execute(args)
     end
 
   end

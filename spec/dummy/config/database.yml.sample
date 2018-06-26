@@ -4,3 +4,4 @@ test:
   min_messages: WARNING
   username: postgres
   password:
+  host: localhost

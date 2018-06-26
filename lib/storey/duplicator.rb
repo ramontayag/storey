@@ -97,15 +97,11 @@ module Storey
     end
 
     def source_schema_migrations
-      ::Storey.switch(@source_schema) do
-        migration_versions
-      end
+      GetMigrationVersions.(@source_schema)
     end
 
     def target_schema_migrations
-      ::Storey.switch(@target_schema) do
-        migration_versions
-      end
+      GetMigrationVersions.(@target_schema)
     end
 
     def replace_occurrences
@@ -123,17 +119,6 @@ module Storey
 
     def suffixify(schema_name)
       Suffixifier.suffixify schema_name
-    end
-
-    private
-
-    def migration_versions
-      if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("5.2")
-        ::ActiveRecord::Migrator.get_all_versions
-      else
-        ::ActiveRecord::Base.connection.migration_context.
-          get_all_versions
-      end
     end
 
   end

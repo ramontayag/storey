@@ -39,7 +39,6 @@ describe Storey::Migrator do
       end
 
       it "should migrate db" do
-        Storey::Migrator.should_receive(:active_record_migrate)
         Storey::Migrator.migrate(@schema_1)
       end
     end
@@ -60,10 +59,12 @@ describe Storey::Migrator do
         Storey::Migrator.run(:up, @schema_1, @migration_version_2)
       end
 
-      it "should migrate to a version" do
-        Storey::Migrator.should_receive(:active_record_run).
-          with(:up, @migration_version_1)
-        Storey::Migrator.run(:up, @schema_1, @migration_version_1)
+      it "migrates up a specific version" do
+        Storey.create("blankschema", load_database_structure: false)
+        Storey::Migrator.run(:up, "blankschema", @migration_version_1)
+
+        expect(Storey::GetMigrationVersions.("blankschema")).
+          to match([@migration_version_1])
       end
     end
 
@@ -76,10 +77,12 @@ describe Storey::Migrator do
         Storey::Migrator.run(:down, @schema_1, @migration_version_2)
       end
 
-      it "should migrate to a version" do
-        Storey::Migrator.should_receive(:active_record_run).
-          with(:down, @migration_version_1)
-        Storey::Migrator.run(:down, @schema_1, @migration_version_1)
+      it "migrates down a specific version" do
+        Storey.create("blankschema")
+        Storey::Migrator.run(:down, "blankschema", @migration_version_1)
+
+        expect(Storey::GetMigrationVersions.("blankschema")).
+          to match([@migration_version_2])
       end
     end
 

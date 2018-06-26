@@ -21,6 +21,7 @@ require 'storey/builds_dump_command'
 require 'storey/builds_load_command'
 require 'storey/schema_name'
 require 'storey/sets_env_password'
+require 'storey/get_migration_versions'
 
 module Storey
 

@@ -43,9 +43,9 @@ describe Storey, "#duplicate!" do
       end
 
       it 'should copy all the schema_migrations over' do
-        public_schema_migrations = Storey.switch { ActiveRecord::Migrator.get_all_versions }
+        public_schema_migrations = Storey.switch { Storey::GetMigrationVersions.() }
         Storey.switch 'bobby' do
-          ActiveRecord::Migrator.get_all_versions.should == public_schema_migrations
+          Storey::GetMigrationVersions.().should == public_schema_migrations
         end
       end
     end

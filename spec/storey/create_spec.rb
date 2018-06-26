@@ -46,9 +46,9 @@ describe Storey, "#create" do
 
   it "should copy the schema_migrations over" do
     Storey.create "foobar"
-    public_schema_migrations = Storey.switch { ActiveRecord::Migrator.get_all_versions }
+    public_schema_migrations = Storey.switch { Storey::GetMigrationVersions.() }
     Storey.switch "foobar" do
-      ActiveRecord::Migrator.get_all_versions.should == public_schema_migrations
+      Storey::GetMigrationVersions.().should == public_schema_migrations
     end
   end
 

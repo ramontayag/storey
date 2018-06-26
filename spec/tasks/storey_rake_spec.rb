@@ -15,20 +15,21 @@ describe Storey, "rake tasks" do
   describe "storey:migrate" do
     before do
       # We don't care how it's migrated
-      ActiveRecord::Migrator.stub(:migrate)
+      # ActiveRecord::Migrator.stub(:migrate)
+      Storey::Migrator.migrate_all
     end
 
     it "should migrate all schemas including public" do
       # +1 to take into account the public schema
-      ActiveRecord::Migrator.should_receive(:migrate).exactly(@number_of_dbs + 1).times
+      Storey::Migrator.should_receive(:migrate).exactly(@number_of_dbs + 1).times
       @rake["storey:migrate"].invoke
     end
 
     context 'when a version is given' do
       it 'should migrate to the given version' do
         ENV['VERSION'] = '3299329'
-        ActiveRecord::Migrator.should_receive(:migrate).
-          with(ActiveRecord::Migrator.migrations_paths, 3299329).
+        Storey::Migrator.should_receive(:migrate).
+          with(anything, version: 3299329).
           exactly(@number_of_dbs + 1).times
         @rake["storey:migrate"].invoke
       end

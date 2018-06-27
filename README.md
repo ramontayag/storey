@@ -39,16 +39,16 @@ Usage:
 
 ## schemas
 
-Returns all schemas except postgres' schemas.
+Returns all postgres' schemas.
 
 Accepts options:
 
-    :exclude_public => true
+    :public => true
 
 Usage:
 
-    Storey.schemas
-    Storey.schemas(:exclude_public => true)
+    Storey.schemas # defaults to :public => true
+    Storey.schemas(:public => true)
 
 ## default_schema?
 

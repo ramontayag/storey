@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    storey (1.0.0)
+    storey (2.0.0)
       easy_class_to_instance_method (~> 0.0.2)
       pg
       rails (>= 4.0.0)

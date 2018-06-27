@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Do not blow up `rake db:create` in Rails 5.2
 
-## [2.0.0]
+## [2.0.0] - 2018-06-26
 ### Added
 - Rails 5 support
 - Add ability to get the current schema as an array of strings (`array: true`)

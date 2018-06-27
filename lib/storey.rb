@@ -31,13 +31,13 @@ module Storey
   extend self
 
   def init
-    self.default_search_path = self.schema
     self.excluded_models ||= []
     self.persistent_schemas ||= []
     process_excluded_models
   end
 
   def default_search_path
+    @@default_search_path ||= self.schema
     default_search_paths = @@default_search_path.split(',')
     paths = default_search_paths + self.persistent_schemas
     paths.uniq!

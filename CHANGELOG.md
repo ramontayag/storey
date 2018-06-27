@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Do not blow up `rake db:create` in Rails 5.2
+
 ## [2.0.0]
 ### Added
 - Rails 5 support

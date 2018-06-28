@@ -37,7 +37,7 @@ module Storey
   end
 
   def default_search_path
-    @@default_search_path ||= self.schema
+    set_default_search_path
     default_search_paths = @@default_search_path.split(',')
     paths = default_search_paths + self.persistent_schemas
     paths.uniq!
@@ -124,6 +124,8 @@ module Storey
   end
 
   def switch(name=nil, &block)
+    set_default_search_path
+
     if block_given?
       original_schema = schema
       switch name
@@ -241,6 +243,10 @@ module Storey
 
   def psql_load_command(options={})
     BuildsLoadCommand.execute(self.database_config.merge(options))
+  end
+
+  def set_default_search_path
+    @@default_search_path ||= self.schema
   end
 
 end

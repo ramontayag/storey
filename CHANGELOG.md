@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [2.0.2] - 2018-06-29
 ### Fixed
 - Fix instances when the default schema is the wrong schema
 - Silence output when creating schemas

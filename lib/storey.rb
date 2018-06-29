@@ -93,7 +93,7 @@ module Storey
   def create_plain_schema(schema_name)
     name = suffixify schema_name
     command = "CREATE SCHEMA #{name}"
-    system psql_load_command(command: command)
+    Open3.capture3 psql_load_command(command: command)
   end
 
   def schemas(options={})

@@ -53,9 +53,14 @@ module Storey
       arg_options['schema-only'] = nil if @structure_only
 
       switches = Utils.command_line_switches_from(arg_options)
+      pg_dump_command = [
+        "pg_dump",
+        switches,
+        Storey.database_config[:database],
+      ].join(" ")
 
-      success = system("pg_dump #{switches} #{Storey.database_config[:database]}")
-      unless success
+      stdout_str, stderr_str, status = Open3.capture3(pg_dump_command)
+      unless status.exitstatus.zero?
         raise StoreyError, "There seems to have been a problem dumping `#{@source_schema}` to make a copy of it into `#{@target_schema}`"
       end
     end
@@ -78,7 +83,7 @@ module Storey
       end
 
       psql_load_command = BuildsLoadCommand.execute(psql_options)
-      system psql_load_command
+      Open3.capture3(psql_load_command)
 
       copy_source_schema_migrations
 

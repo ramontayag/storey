@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Fixed
 - Fix instances when the default schema is the wrong schema
+- Silence output when creating schemas
 
 ## [2.0.1] - 2018-06-27
 ### Fixed

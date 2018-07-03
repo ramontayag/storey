@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Storey::BuildsDumpCommand do
+describe Storey::GenDumpCommand do
 
   describe '.execute' do
     subject do

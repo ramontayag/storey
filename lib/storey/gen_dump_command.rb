@@ -1,5 +1,5 @@
 module Storey
-  class BuildsDumpCommand
+  class GenDumpCommand
 
     easy_class_to_instance
 

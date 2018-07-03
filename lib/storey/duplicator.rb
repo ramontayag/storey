@@ -61,7 +61,14 @@ module Storey
 
       stdout_str, stderr_str, status = Open3.capture3(pg_dump_command)
       unless status.exitstatus.zero?
-        raise StoreyError, "There seems to have been a problem dumping `#{@source_schema}` to make a copy of it into `#{@target_schema}`"
+        msg = [
+          "Problem dumping",
+          "`#{@source_schema}`",
+          "to make a copy of it into",
+          "`#{@target_schema}`:",
+          stderr_str,
+        ].join(" ")
+        raise StoreyError, msg
       end
     end
 

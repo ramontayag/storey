@@ -1,5 +1,5 @@
 module Storey
-  class BuildsLoadCommand
+  class GenLoadCommand
 
     easy_class_to_instance
 

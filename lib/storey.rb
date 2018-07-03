@@ -19,7 +19,7 @@ require 'storey/unsuffixifier'
 require 'storey/resets_column_info'
 require 'storey/utils'
 require 'storey/gen_dump_command'
-require 'storey/builds_load_command'
+require 'storey/gen_load_command'
 require 'storey/schema_name'
 require 'storey/sets_env_password'
 require 'storey/get_migration_versions'
@@ -260,7 +260,7 @@ module Storey
   end
 
   def psql_load_command(options={})
-    BuildsLoadCommand.execute(self.database_config.merge(options))
+    GenLoadCommand.execute(self.database_config.merge(options))
   end
 
   def set_default_search_path

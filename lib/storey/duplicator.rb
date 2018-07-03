@@ -79,7 +79,7 @@ module Storey
         ::Storey.create_plain_schema @target_schema
       end
 
-      psql_load_command = BuildsLoadCommand.execute(psql_options)
+      psql_load_command = GenLoadCommand.execute(psql_options)
       Open3.capture3(psql_load_command)
 
       copy_source_schema_migrations

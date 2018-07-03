@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Storey
-  describe BuildsLoadCommand do
+  describe GenLoadCommand do
 
     describe '.execute' do
       let(:options) do

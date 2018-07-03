@@ -4,7 +4,7 @@ describe Storey::Duplicator do
 
   describe '#perform!' do
     context "when the dump is a failure" do
-      it 'should raise an error' do
+      it 'raises an error' do
         duplicator = described_class.new('non-existent-will-fail-dump', 'new')
         expected_msg = [
           "Problem dumping `non-existent-will-fail-dump` to make a copy of it",
@@ -16,7 +16,7 @@ describe Storey::Duplicator do
       end
     end
 
-    it 'should remove the target and source sql files after work' do
+    it 'removes the target and source sql files after work' do
       Storey.create 'boo'
       duplicator = described_class.new('boo', 'ya')
       duplicator.perform!

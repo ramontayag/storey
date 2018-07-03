@@ -47,7 +47,7 @@ module Storey
       options[:database] ||= Storey.database_config[:database]
       options[:username] ||= Storey.database_config[:username]
       options[:file] = @source_file
-      pg_dump_command = Storey::GenDumpCommand.execute(options)
+      pg_dump_command = GenDumpCommand.execute(options)
 
       stdout_str, stderr_str, status = Open3.capture3(pg_dump_command)
       unless status.exitstatus.zero?

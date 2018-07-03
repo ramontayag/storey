@@ -2,16 +2,20 @@ module Storey
   class GenDumpCommand
 
     def self.call(options={})
-      if options[:database].blank?
-        raise ArgumentError, 'database must be supplied'
+      switches = {}
+
+      if options[:database_url].nil?
+        if options[:database].blank?
+          raise ArgumentError, 'database must be supplied'
+        end
+
+        switches['host'] = options[:host] if options[:host].present?
+        switches['username'] = options[:username] if options[:username].present?
       end
 
-      switches = {}
       switches['schema-only'] = nil if options[:structure_only]
       switches['no-privileges'] = nil
       switches['no-owner'] = nil
-      switches['host'] = options[:host] if options[:host].present?
-      switches['username'] = options[:username] if options[:username].present?
       switches[:file] = Shellwords.escape(options[:file])
 
       if options[:schemas]
@@ -25,10 +29,13 @@ module Storey
       if options[:password].present?
         command_parts << "PGPASSWORD=#{options[:password]}"
       end
-      command_parts += ['pg_dump',
-                       Utils.command_line_switches_from(switches),
-                       schemas_switches,
-                       options[:database]]
+      command_parts << "pg_dump"
+      command_parts << options[:database_url] if options[:database_url].present?
+      command_parts += [
+        Utils.command_line_switches_from(switches),
+        schemas_switches,
+        options[:database],
+      ]
       command_parts.compact.join(' ')
     end
 

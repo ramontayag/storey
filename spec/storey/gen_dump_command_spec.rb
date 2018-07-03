@@ -3,7 +3,7 @@ require 'spec_helper'
 module Storey
   describe GenDumpCommand do
 
-    subject do
+    subject(:command) do
       described_class.(options)
     end
 
@@ -14,6 +14,21 @@ module Storey
         schemas: 'public',
         database: 'mydb'
       }
+    end
+
+    context "connection string is available" do
+      let(:options) do
+        {
+          structure_only: true,
+          file: 'myfile.sql',
+          schemas: 'public',
+          database_url: "postgres://user:pass@ip.com:5432/db",
+        }
+      end
+
+      it "uses the connection string" do
+        expect(command).to include "pg_dump postgres://user:pass@ip.com:5432/db"
+      end
     end
 
     context "when host is specified" do

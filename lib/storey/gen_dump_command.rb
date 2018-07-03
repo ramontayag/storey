@@ -1,7 +1,7 @@
 module Storey
   class GenDumpCommand
 
-    def self.execute(options={})
+    def self.call(options={})
       if options[:database].blank?
         raise ArgumentError, 'database must be supplied'
       end

@@ -34,7 +34,7 @@ module Storey
         schemas: search_path,
         database: database_name,
       )
-      @command = GenDumpCommand.execute(args)
+      @command = GenDumpCommand.(args)
     end
 
   end

@@ -14,13 +14,28 @@ module Storey
       }
     end
 
-    subject { described_class.(options) }
+    subject(:command) { described_class.(options) }
 
     it { should include('--file=/path/file\ dump.sql') }
     it { should include('--dbname=mydb') }
     it { should include('--username=myuser') }
     it { should include('--host=localhost') }
     it { should include('--password=12345')}
+
+    context "when database_url is set" do
+      subject(:command) do
+        described_class.(
+          database_url: "postgres://u:p@host:5432/db",
+          file: '/path/file dump.sql',
+          host: 'localhost',
+        )
+      end
+
+      it "prioritizes the database_url" do
+        expect(command).to include "psql postgres://u:p@host:5432/db"
+        expect(command).to_not include "localhost"
+      end
+    end
 
     context 'when host is not set' do
       before { options[:host] = nil }

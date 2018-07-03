@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Print duplication stdout for debugging
+- Allow users to set `database_url` in the config
+- Deprecate setting of config through `Storey`; set through configuration
 
 ## [2.0.2] - 2018-06-29
 ### Fixed

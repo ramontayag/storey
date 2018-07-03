@@ -1,3 +1,4 @@
+require "gem_config"
 require 'easy_class_to_instance_method'
 require "active_support/core_ext/module" # so we can use mattr_accessor
 require "open3"
@@ -30,16 +31,37 @@ module Storey
   mattr_reader :excluded_models
   extend self
 
+  include GemConfig::Base
+  with_configuration do
+    has :database_url, classes: [String, NilClass]
+    has :suffix, classes: [String, NilClass]
+    has :persistent_schemas, classes: Array, default: []
+    has :excluded_models, classes: Array, default: []
+  end
+
+  def self.persistent_schemas=(schemas)
+    deprecate "setting persistent schemas directly via `Storey.persistent_schemas=` is deprecated. Please use `Storey.configure {|c| c.persistent_schemas = %w(hstore) }` instead."
+    self.configuration.persistent_schemas = schemas
+  end
+
+  def self.suffix=(s)
+    deprecate "setting suffix directly via `Storey.suffix=` is deprecated. Please use `Storey.configure {|c| c.suffix = %w(_mysfx) }` instead."
+    self.configuration.suffix = s
+  end
+
+  def self.excluded_models=(models)
+    deprecate "setting models directly via `Storey.excluded_models=` is deprecated. Please use `Storey.configure {|c| c.excluded_models = %w(User Setting) }` instead."
+    self.configuration.excluded_models = models
+  end
+
   def init
-    self.excluded_models ||= []
-    self.persistent_schemas ||= []
     process_excluded_models
   end
 
   def default_search_path
     set_default_search_path
     default_search_paths = @@default_search_path.split(',')
-    paths = default_search_paths + self.persistent_schemas
+    paths = default_search_paths + self.configuration.persistent_schemas
     paths.uniq!
     paths.compact!
     paths.join(',')
@@ -47,11 +69,6 @@ module Storey
 
   def default_schema?
     self.schema == self.default_search_path
-  end
-
-  def excluded_models=(array)
-    @@excluded_models = array
-    process_excluded_models
   end
 
   def schema(options={})
@@ -154,7 +171,7 @@ module Storey
   def schema_exists?(name)
     schema_name = suffixify(name)
 
-    schemas_in_db = self.schemas(suffix: self.suffix.present?)
+    schemas_in_db = self.schemas(suffix: self.configuration.suffix.present?)
     schemas_in_db << %("$user")
     schema_names = schema_name.split(',').map(&:strip)
     schemas_not_in_db = schema_names - schemas_in_db
@@ -164,7 +181,7 @@ module Storey
   def schema_search_path_for(schema_name)
     schema_names = schema_name.split(',')
     path = [suffixify(schema_name)]
-    self.persistent_schemas.each do |schema|
+    self.configuration.persistent_schemas.each do |schema|
       unless schema_names.include?(schema)
         path << suffixify(schema)
       end
@@ -173,9 +190,10 @@ module Storey
   end
 
   def reload_config!
-    self.excluded_models = []
-    self.persistent_schemas = []
-    self.suffix = nil
+    self.configuration.excluded_models = []
+    self.configuration.persistent_schemas = []
+    self.configuration.suffix = nil
+    self.configuration.database_url = nil
   end
 
   def database_config
@@ -213,7 +231,7 @@ module Storey
   end
 
   def process_excluded_models
-    self.excluded_models.each do |model_name|
+    self.configuration.excluded_models.each do |model_name|
       model_name.constantize.tap do |klass|
         table_name = klass.table_name.split('.', 2).last
         klass.table_name = "public.#{table_name}"

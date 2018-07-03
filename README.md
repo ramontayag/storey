@@ -10,17 +10,24 @@ Heavily inspired by the Apartment gem, Storey simplifies the implementation of m
 
 Typically set in an initializer: `config/initializer/storey.rb`
 
-    # Defines the tables that should stay available to all (ie in the public schema)
-    # Note that there's currently no way to exclude tables that aren't linked to models
-    # If you have any ideas on how to do this I'm open to suggestions
-    Storey.excluded_models = %w(User Company Role Permission)
+```ruby
+Storey.configure do |c|
+  # Defines the tables that should stay available to all (ie in the public schema)
+  # Note that there's currently no way to exclude tables that aren't linked to models
+  # If you have any ideas on how to do this I'm open to suggestions
+  c.excluded_models = %w(User Company Role Permission)
 
-    # If set, all schemas are created with the suffix.
-    # Used for obscuring the schema name - which is important when performing schema duplication.
-    # Storey.suffix = "_suffix"
+  # If set, all schemas are created with the suffix.
+  # Used for obscuring the schema name - which is important when performing schema duplication.
+  # c.suffix = "_suffix"
 
-    # Defines schemas that should always stay in the search path, apart from the one you switched to.
-    # Storey.persistent_schemas = %w(hstore)
+  # Defines schemas that should always stay in the search path, apart from the one you switched to.
+  # c.persistent_schemas = %w(hstore)
+
+  # If you use a connection string, set it here. When nil, it falls back to the configuration in database.yml
+  c.database_url = ENV["DATABASE_URL"]
+end
+```
 
 # Methods
 

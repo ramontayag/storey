@@ -26,7 +26,7 @@ module Storey
     end
 
     def suffix
-      Storey.suffix
+      Storey.configuration.suffix
     end
 
     def native_schema?(schema_name)

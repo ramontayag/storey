@@ -22,7 +22,7 @@ module Storey
     private
 
     def suffix
-      Storey.suffix
+      Storey.configuration.suffix
     end
 
     def schema_names

@@ -111,7 +111,7 @@ describe Storey, "#switch" do
         persistent_schemas.each do |schema|
           Storey.create schema
         end
-        Storey.persistent_schemas = persistent_schemas
+        Storey.configuration.persistent_schemas = persistent_schemas
       end
 
       it 'should switch to the schema with the persitent schemas still in the search path' do
@@ -131,7 +131,7 @@ describe Storey, "#switch" do
         persistent_schemas.each do |schema|
           Storey.create schema
         end
-        Storey.persistent_schemas = persistent_schemas
+        Storey.configuration.persistent_schemas = persistent_schemas
       end
 
       it 'should switch to the schema with the persitent schemas still in the search path' do
@@ -151,7 +151,7 @@ describe Storey, "#switch" do
         persistent_schemas.each do |schema|
           Storey.create schema
         end
-        Storey.persistent_schemas = persistent_schemas
+        Storey.configuration.persistent_schemas = persistent_schemas
       end
 
       it 'should not have duplicate schemas in the search path' do

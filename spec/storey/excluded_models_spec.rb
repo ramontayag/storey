@@ -12,7 +12,7 @@ describe Storey, "dealing with excluded_models" do
     Storey.create("foo") { Company.create :name => "company_1" }
     Company.create :name => "company_2"
 
-    Company.count.should == 2
-    Storey.switch("foo") {Company.count.should == 2}
+    expect(Company.count).to eq 2
+    Storey.switch("foo") { expect(Company.count).to eq 2 }
   end
 end

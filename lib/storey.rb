@@ -260,7 +260,7 @@ module Storey
   end
 
   def psql_load_command(options={})
-    GenLoadCommand.execute(self.database_config.merge(options))
+    GenLoadCommand.(self.database_config.merge(options))
   end
 
   def set_default_search_path

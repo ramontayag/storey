@@ -3,7 +3,7 @@ language: ruby
 services:
   postgresql
 addons:
-  postgresql: 9.4
+  postgresql: 9.6
 before_script:
   - cp spec/dummy/config/database.yml{.sample,}
   - psql -U postgres -c 'CREATE DATABASE storey_test;'

@@ -260,7 +260,14 @@ module Storey
   end
 
   def psql_load_command(options={})
-    GenLoadCommand.(self.database_config.merge(options))
+    args = self.database_config.slice(
+      :database,
+      :username,
+      :host,
+      :port,
+      :password,
+    ).merge(options).symbolize_keys
+    GenLoadCommand.(args)
   end
 
   def set_default_search_path

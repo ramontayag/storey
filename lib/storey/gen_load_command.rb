@@ -1,24 +1,33 @@
 module Storey
   class GenLoadCommand
 
-    def self.call(options={})
+    def self.call(
+      file: nil,
+      command: nil,
+      database_url: Storey.configuration.database_url,
+      database: nil,
+      username: nil,
+      host: nil,
+      port: nil,
+      password: nil
+    )
       switches = {}
-      if options[:file].present?
-        switches[:file] = Shellwords.escape(options[:file])
+      if file.present?
+        switches[:file] = Shellwords.escape(file)
       end
-      switches[:command] = %Q("#{options[:command]}") if options[:command].present?
+      switches[:command] = %Q("#{command}") if command.present?
 
       command_parts = ["psql"]
 
-      if options[:database_url].present?
-        command_parts << options[:database_url]
+      if database_url.present?
+        command_parts << database_url
       else
-        switches[:dbname] = options[:database]
-        switches[:username] = options[:username] if options[:username].present?
-        switches[:host] = options[:host] if options[:host].present?
-        switches[:port] = options[:port] if options[:port].present?
-        if options[:password].present?
-          switches[:password] = options[:password]
+        switches[:dbname] = database
+        switches[:username] = username if username.present?
+        switches[:host] = host if host.present?
+        switches[:port] = port if port.present?
+        if password.present?
+          switches[:password] = password
         else
           switches['no-password'] = nil
         end

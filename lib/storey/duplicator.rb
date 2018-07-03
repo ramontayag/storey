@@ -70,7 +70,13 @@ module Storey
 
     def load_schema(options={})
       options[:file] ||= @target_file
-      psql_options = Storey.database_config.merge(options)
+      psql_options = Storey.database_config.slice(
+        :database,
+        :username,
+        :host,
+        :port,
+        :password,
+      ).merge(options).symbolize_keys
 
       if duplicating_from_default?
         # Since we are copying the source schema and we're after structure only,

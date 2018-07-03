@@ -11,7 +11,6 @@ module Storey
     end
 
     def execute
-
       switches = {}
       switches['schema-only'] = nil if @options[:structure_only]
       switches['no-privileges'] = nil

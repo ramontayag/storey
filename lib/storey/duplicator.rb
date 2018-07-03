@@ -39,25 +39,15 @@ module Storey
     end
 
     def dump_schema(options={})
-      SetsEnvPassword.with(Storey.database_config[:password])
       prepare_schema_dump_directories
 
-      if Storey.database_config[:host].present?
-        options[:host] ||= Storey.database_config[:host]
-      end
-
-      arg_options = options.dup
-      arg_options[:username] ||= Storey.database_config[:username]
-      arg_options[:file]     ||= @source_file
-      arg_options[:schema]   ||= @source_schema
-      arg_options['schema-only'] = nil if @structure_only
-
-      switches = Utils.command_line_switches_from(arg_options)
-      pg_dump_command = [
-        "pg_dump",
-        switches,
-        Storey.database_config[:database],
-      ].join(" ")
+      options[:host] ||= Storey.database_config[:host]
+      options[:structure_only] = true if @structure_only
+      options[:schemas] = @source_schema
+      options[:database] ||= Storey.database_config[:database]
+      options[:username] ||= Storey.database_config[:username]
+      options[:file] = @source_file
+      pg_dump_command = Storey::BuildsDumpCommand.execute(options)
 
       stdout_str, stderr_str, status = Open3.capture3(pg_dump_command)
       unless status.exitstatus.zero?

@@ -9,11 +9,13 @@ module Storey
     private
 
     def self.migration_versions
-      if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("5.2")
-        ::ActiveRecord::Migrator.get_all_versions
-      else
-        ::ActiveRecord::Base.connection.migration_context.
-          get_all_versions
+      ActiveRecord::Base.connection.uncached do
+        if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new("5.2")
+          ::ActiveRecord::Migrator.get_all_versions
+        else
+          ::ActiveRecord::Base.connection.migration_context.
+            get_all_versions
+        end
       end
     end
 

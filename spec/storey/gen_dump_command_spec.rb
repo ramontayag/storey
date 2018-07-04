@@ -31,6 +31,21 @@ module Storey
       end
     end
 
+    context "connection string is passed in" do
+      let(:options) do
+        {
+          structure_only: true,
+          file: 'myfile.sql',
+          database_url: "postgres://user:pass@ip.com:5432/db",
+          database: "testdb",
+        }
+      end
+
+      it "ignores the `database` value" do
+        expect(command).to_not match /testdb/
+      end
+    end
+
     context "connection string is set in Storey" do
       before do
         Storey.configuration.database_url = "postgres://user:pass@ip.com:5432/db"

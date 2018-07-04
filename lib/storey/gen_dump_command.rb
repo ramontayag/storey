@@ -43,8 +43,8 @@ module Storey
       command_parts += [
         Utils.command_line_switches_from(switches),
         schemas_switches,
-        database,
       ]
+      command_parts << database if database_url.blank?
       command_parts.compact.join(' ')
     end
 

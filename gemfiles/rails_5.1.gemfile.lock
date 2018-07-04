@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    storey (2.0.2)
+    storey (2.1.0)
       easy_class_to_instance_method (~> 0.0.2)
       gem_config
       pg

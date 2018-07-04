@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Fixed
+- Fix copying of schemas in when ActiveRecord caches queries
+
 ## [2.1.0] - 2018-07-04
 ### Added
 - Print duplication stdout for debugging

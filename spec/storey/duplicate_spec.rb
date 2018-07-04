@@ -52,17 +52,9 @@ describe Storey, "#duplicate!" do
 
   end
 
-  it "should clear the PGPASSWORD environment variable" do
-    Storey.create 'ricky'
-    expect(Storey::SetsEnvPassword).to receive(:with).
-      with(Storey.database_config[:password])
-    Storey.duplicate! 'ricky', 'bobby'
-    ENV['PGPASSWORD'].should be_blank
-  end
-
   context "when a suffix is set" do
     before do
-      Storey.suffix = "_shakenbake"
+      Storey.configuration.suffix = "_shakenbake"
       Storey.create 'ricky' do
         Post.create :name => "Hi"
       end

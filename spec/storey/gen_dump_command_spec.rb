@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Storey::BuildsDumpCommand do
+module Storey
+  describe GenDumpCommand do
 
-  describe '.execute' do
-    subject do
-      described_class.execute(options)
+    subject(:command) do
+      described_class.(options)
     end
 
     let(:options) do
@@ -14,6 +14,54 @@ describe Storey::BuildsDumpCommand do
         schemas: 'public',
         database: 'mydb'
       }
+    end
+
+    context "connection string is passed in" do
+      let(:options) do
+        {
+          structure_only: true,
+          file: 'myfile.sql',
+          schemas: 'public',
+          database_url: "postgres://user:pass@ip.com:5432/db",
+        }
+      end
+
+      it "uses the connection string" do
+        expect(command).to include "pg_dump postgres://user:pass@ip.com:5432/db"
+      end
+    end
+
+    context "connection string is passed in" do
+      let(:options) do
+        {
+          structure_only: true,
+          file: 'myfile.sql',
+          database_url: "postgres://user:pass@ip.com:5432/db",
+          database: "testdb",
+        }
+      end
+
+      it "ignores the `database` value" do
+        expect(command).to_not match /testdb/
+      end
+    end
+
+    context "connection string is set in Storey" do
+      before do
+        Storey.configuration.database_url = "postgres://user:pass@ip.com:5432/db"
+      end
+
+      let(:options) do
+        {
+          structure_only: true,
+          file: 'myfile.sql',
+          schemas: 'public',
+        }
+      end
+
+      it "uses the connection string" do
+        expect(command).to include "pg_dump postgres://user:pass@ip.com:5432/db"
+      end
     end
 
     context "when host is specified" do

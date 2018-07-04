@@ -19,7 +19,7 @@ module Storey
     private
 
     def ensure_hstore_is_persistent
-      unless Storey.persistent_schemas.include?('hstore')
+      unless Storey.configuration.persistent_schemas.include?('hstore')
         fail StoreyError, 'You are attempting to install hstore data type, but the hstore schema (where the data type will be installed) is not one of the persistent schemas. Please add hstore to the list of persistent schemas.'
       end
     end

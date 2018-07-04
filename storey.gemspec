@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'easy_class_to_instance_method', '~> 0.0.2'
   s.add_runtime_dependency "rails", ">= 4.0.0"
   s.add_runtime_dependency "pg"
+  s.add_runtime_dependency "gem_config"
 end

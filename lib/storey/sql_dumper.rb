@@ -33,8 +33,8 @@ module Storey
         file: @file,
         schemas: search_path,
         database: database_name,
-      )
-      @command = BuildsDumpCommand.execute(args)
+      ).symbolize_keys
+      @command = GenDumpCommand.(args)
     end
 
   end

@@ -17,13 +17,13 @@ describe 'Storey', '#default_search_path' do
   end
 
   it 'includes the persistent schemas' do
-    Storey.persistent_schemas = %w(hello there)
+    Storey.configuration.persistent_schemas = %w(hello there)
     expect(Storey.default_search_path).to eq '"$user",public,hello,there'
   end
 
   context 'when the persistent schemas includes `public`' do
     it 'has one instance of public' do
-      Storey.persistent_schemas = %w(public hello)
+      Storey.configuration.persistent_schemas = %w(public hello)
       expect(Storey.default_search_path).to eq '"$user",public,hello'
     end
   end

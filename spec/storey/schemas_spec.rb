@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Storey, "#schemas" do
   context "when suffix is set" do
     before do
-      Storey.suffix = "_roboto"
+      Storey.configuration.suffix = "_roboto"
     end
 
     it "should return an array of the schemas without the suffix by default" do

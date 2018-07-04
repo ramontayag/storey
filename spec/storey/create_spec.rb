@@ -76,7 +76,7 @@ describe Storey, "#create" do
 
   context "when suffix is set" do
     before do
-      Storey.suffix = "_rock"
+      Storey.configuration.suffix = "_rock"
     end
 
     it "should create a schema with the suffix" do

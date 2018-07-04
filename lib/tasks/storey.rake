@@ -1,7 +1,7 @@
 namespace :storey do
 
   namespace :hstore do
-    desc "Install hstore into the hstore#{Storey.suffix} schema"
+    desc "Install hstore into the hstore#{Storey.configuration.suffix} schema"
     task :install => :environment do
       Storey::Hstore.install
     end

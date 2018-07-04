@@ -13,7 +13,7 @@ describe Storey, "#schema" do
 
   context "when a suffix is set" do
     before do
-      Storey.suffix = "_rock"
+      Storey.configuration.suffix = "_rock"
       Storey.create "hello"
       Storey.switch "hello"
     end

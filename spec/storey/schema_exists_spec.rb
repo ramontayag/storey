@@ -28,7 +28,7 @@ describe Storey, '#schema_exists?' do
   context 'when there is a suffix' do
     context 'when the schema exists' do
       before do
-        Storey.suffix = '_boo'
+        Storey.configuration.suffix = '_boo'
         Storey.create 'croo'
       end
 

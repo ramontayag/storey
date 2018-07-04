@@ -111,7 +111,7 @@ Accepts
     origin - name of old schema to copy
     copy - name of new schema
 
-Copies a schema with all data under a new name. Best used in conjunction with `Storey.suffix` set.
+Copies a schema with all data under a new name. Best used in conjunction with `Storey.configuration.suffix` set.
 
 Usage:
 

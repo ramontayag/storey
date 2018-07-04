@@ -54,7 +54,7 @@ describe Storey, "#duplicate!" do
 
   context "when a suffix is set" do
     before do
-      Storey.suffix = "_shakenbake"
+      Storey.configuration.suffix = "_shakenbake"
       Storey.create 'ricky' do
         Post.create :name => "Hi"
       end

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Storey, "#drop" do
   context "when suffix is set" do
     before do
-      Storey.suffix = "bar"
+      Storey.configuration.suffix = "bar"
       Storey.create "foo"
     end
 

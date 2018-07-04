@@ -10,7 +10,7 @@ describe Storey, '.create_plain_schema' do
 
   context 'when there is a suffix set' do
     before do
-      Storey.suffix = '_lop'
+      Storey.configuration.suffix = '_lop'
     end
 
     it 'should create a schema with the suffix' do

@@ -8,7 +8,7 @@ describe Storey::Suffixifier do
     end
 
     context 'suffixes have been turned on' do
-      before { Storey.suffix = '_suff' }
+      before { Storey.configuration.suffix = '_suff' }
 
       context 'when the schema given has not already been suffixified' do
         let(:schema_name) { 'boom' }
@@ -30,7 +30,7 @@ describe Storey::Suffixifier do
     end
 
     context 'suffixes are not on' do
-      before { Storey.suffix = nil }
+      before { Storey.configuration.suffix = nil }
       let(:schema_name) { 'boom' }
       it { should == 'boom' }
     end

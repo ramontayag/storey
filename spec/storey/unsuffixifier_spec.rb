@@ -6,7 +6,7 @@ describe Storey::Unsuffixifier do
     subject { described_class.new(schema_name).unsuffixify }
 
     context 'when the suffix is set' do
-      before { Storey.suffix = '_buff' }
+      before { Storey.configuration.suffix = '_buff' }
 
       context 'when the schema name does not have a suffix' do
         let(:schema_name) { 'big' }

@@ -11,7 +11,7 @@ describe Storey, "#switch" do
 
   context "with a schema set" do
     before do
-      Storey.suffix = "_hello"
+      Storey.configuration.suffix = "_hello"
       Storey.create "foobar"
     end
 
@@ -56,7 +56,7 @@ describe Storey, "#switch" do
   context "when the schema passed does not exist" do
     context "when the suffix is set" do
       before do
-        Storey.suffix = "_rock"
+        Storey.configuration.suffix = "_rock"
       end
 
       it "should raise an error naming the schema with suffix" do
@@ -125,7 +125,7 @@ describe Storey, "#switch" do
 
     context 'when suffixes are set' do
       before do
-        Storey.suffix = '_boomboom'
+        Storey.configuration.suffix = '_boomboom'
         Storey.create 'foobar'
         persistent_schemas = %w(handle bar foo)
         persistent_schemas.each do |schema|

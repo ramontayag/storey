@@ -33,7 +33,7 @@ module Storey
         file: @file,
         schemas: search_path,
         database: database_name,
-      )
+      ).symbolize_keys
       @command = GenDumpCommand.(args)
     end
 

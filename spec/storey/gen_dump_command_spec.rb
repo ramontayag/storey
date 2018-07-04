@@ -16,13 +16,31 @@ module Storey
       }
     end
 
-    context "connection string is available" do
+    context "connection string is passed in" do
       let(:options) do
         {
           structure_only: true,
           file: 'myfile.sql',
           schemas: 'public',
           database_url: "postgres://user:pass@ip.com:5432/db",
+        }
+      end
+
+      it "uses the connection string" do
+        expect(command).to include "pg_dump postgres://user:pass@ip.com:5432/db"
+      end
+    end
+
+    context "connection string is set in Storey" do
+      before do
+        Storey.configuration.database_url = "postgres://user:pass@ip.com:5432/db"
+      end
+
+      let(:options) do
+        {
+          structure_only: true,
+          file: 'myfile.sql',
+          schemas: 'public',
         }
       end
 

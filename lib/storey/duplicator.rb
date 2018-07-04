@@ -96,10 +96,8 @@ module Storey
     def copy_source_schema_migrations
       ::Storey.switch @target_schema do
         source_schema_migrations.each do |version|
-          unless target_schema_migrations.include?(version)
-            command = "INSERT INTO schema_migrations (version) VALUES ('#{version}');"
-            ::ActiveRecord::Base.connection.execute command
-          end
+          ActiveRecord::SchemaMigration.where(version: version).
+            first_or_create!
         end
       end
     end

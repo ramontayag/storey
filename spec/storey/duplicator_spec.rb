@@ -27,6 +27,20 @@ describe Storey::Duplicator do
       expect(Dir[source_dump_dir]).to be_empty
       expect(Dir[target_dump_dir]).to be_empty
     end
+
+    it "does not used cached schema migration versions when copying" do
+      s1_versions_count = nil
+      Storey.create("s1") do
+        s1_versions_count = ActiveRecord::SchemaMigration.count
+      end
+
+      duplicator = described_class.new('s1', 's2')
+      duplicator.perform!
+
+      Storey.switch("s2") do
+        expect(ActiveRecord::SchemaMigration.count).to eq s1_versions_count
+      end
+    end
   end
 
 end

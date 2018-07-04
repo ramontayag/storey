@@ -105,11 +105,11 @@ module Storey
     end
 
     def source_schema_migrations
-      GetMigrationVersions.(@source_schema)
+      @source_schema_migrations ||= GetMigrationVersions.(@source_schema)
     end
 
     def target_schema_migrations
-      GetMigrationVersions.(@target_schema)
+      @target_schema_migrations ||= GetMigrationVersions.(@target_schema)
     end
 
     def replace_occurrences

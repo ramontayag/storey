@@ -82,8 +82,8 @@ describe Storey, "#switch" do
       it "should execute the block in the default schema" do
         Storey.switch "foobar"
         Storey.switch { Post.create }
-        Post.count.should be_zero
-        Storey.switch { Post.count.should == 1 }
+        expect(Post.count).to be_zero
+        Storey.switch { expect(Post.count).to eq 1 }
       end
 
       it "should return to the schema that the app was previously in" do

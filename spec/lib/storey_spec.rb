@@ -25,6 +25,18 @@ RSpec.describe Storey do
 
       Storey.switch("s1") { expect(Post.count).to eq 2 }
       Storey.switch("s2") { expect(Post.count).to eq 3 }
+
+      Storey.switch("s1")
+      expect(Post.count).to eq 2
+
+      Storey.switch("s2")
+      expect(Post.count).to eq 3
+
+      Storey.create "foobar"
+      Storey.switch "foobar"
+      Storey.switch { Post.create }
+      expect(Post.count).to be_zero
+      Storey.switch { expect(Post.count).to eq 1 }
     end
   end
 

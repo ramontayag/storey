@@ -150,6 +150,7 @@ module Storey
       switch original_schema
       result
     else
+      ::ActiveRecord::Base.connection.query_cache.clear
       reset and return if name.blank? || name == 'public'
       path = self.schema_search_path_for(name)
 

@@ -14,12 +14,6 @@ require 'pry'
 RSpec.configure do |config|
   config.order = 'random'
 
-  config.before(:suite) do
-    # Enable query cache so we can catch unexpected behaviour with AR
-    # caching
-    ActiveRecord::Base.connection.enable_query_cache!
-  end
-
   config.before(:each) do
     # We don't want configuration to leak into other tests
     Storey.reload_config!
@@ -54,6 +48,10 @@ RSpec.configure do |config|
     ENV['STEP'] = ENV['VERSION'] = nil
     Rails.application.config.active_record.schema_format = :ruby
     Storey::Migrator.migrate_all
+
+    # Enable query cache so we can catch unexpected behaviour with AR
+    # caching
+    ActiveRecord::Base.connection.enable_query_cache!
   end
 end
 

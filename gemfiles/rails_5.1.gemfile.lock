@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    storey (2.1.1)
+    storey (2.1.2)
       easy_class_to_instance_method (~> 0.0.2)
       gem_config
       pg
@@ -152,4 +152,4 @@ DEPENDENCIES
   storey!
 
 BUNDLED WITH
-   1.16.2
+   1.16.3

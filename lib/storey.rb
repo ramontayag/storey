@@ -6,6 +6,7 @@ require "open3"
 require "storey/version"
 require "rails/all"
 require 'storey/railtie' if defined?(Rails)
+require 'storey/rack_switch'
 require 'storey/exceptions'
 require 'storey/migrator'
 require 'storey/duplicator'
@@ -37,6 +38,7 @@ module Storey
     has :suffix, classes: [String, NilClass]
     has :persistent_schemas, classes: Array, default: []
     has :excluded_models, classes: Array, default: []
+    has :switch_processor
   end
 
   def self.persistent_schemas=(schemas)

@@ -122,3 +122,11 @@ Usage:
 ## storey:hstore:install
 
 Run `rake storey:hstore:install` to install hstore extension into the hstore schema. Ensure that 'hstore' is one of the persistent schemas.
+
+# Development
+
+In the storey directory, after installing the gems:
+
+- `docker-compose up db`
+- `cp spec/dummy/config/database.yml{.sample,}
+- `rspec spec`

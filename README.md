@@ -29,6 +29,65 @@ Storey.configure do |c|
 end
 ```
 
+## Switching in your Rack app
+
+To switch in your application, you can just opt to call `Storey.switch`
+somewhere in your app. For example, in a Rails ApplicationController it would
+look like:
+
+```ruby
+class ApplicationController
+  before_action :switch_to_tenant
+
+  def switch_to_tenant
+    subdomain = request.subdomain
+    Storey.switch(subdomain) if Website.exists?(subdomain: subdomain)
+  end
+end
+```
+
+There are some instances where you need to switch schemas before you get to your
+application. A good example is Devise. Devise uses Warden to authenticate users.
+Warden is inserted as a Rack application and checks to see if the user
+attempting to access the page signed in.
+
+To do this, it must check the database. If your users live on separate schemas,
+there's a big chance that Warden will think the user does not exist. Especially
+in this scenario, use the Rack app found in this gem. In Rails, insert this
+somewhere in your `application.rb` or in an initializer:
+
+```ruby
+Rails.application.config.middleware.
+  insert_before Warden::Manager, Storey::RackSwitch
+```
+
+You must also define how to determine the schema to switch to. To do that, set
+`switch_processor`:
+
+```ruby
+Storey.configure do |c|
+  c.switch_processor = ->(env) do
+    # find the schema name based on something in the env
+    subdomain = find_in_env(env)
+    return subdomain if Website.exists?(subdomain: schema)
+  end
+
+  # You can pass any object that responds to call and accepts one arg: the env.
+  c.switch_processor = MyStoreySwitchProcessor
+end
+
+class MyStoreySwitchProcessor
+  def self.call(env)
+    subdomain = find_in_env(env)
+    # ...
+  end
+end
+```
+
+When the result of `switch_processor` is a string,
+`Storey.switch('the-string-it-returns')` is called. If `nil`, no switching 
+happens.
+
 # Methods
 
 ## schema

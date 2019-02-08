@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0] - 2019-02-08
+### Added
+- Ability to switch via a Rack app
+
 ## [2.1.2] - 2018-08-14
 ### Fixed
 - Instances when queries are cached between switches
